@@ -1,7 +1,9 @@
+import "express-async-errors";
 import express from "express";
 import authRoutes from "./routes/auth-route";
 import "@/db/connect";
 import dotenv from "dotenv";
+import { errorHandler } from "./middlewares/error-middleware";
 
 dotenv.config();
 
@@ -17,6 +19,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRoutes);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}: http://localhost:${PORT}`);
