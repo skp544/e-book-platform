@@ -103,3 +103,16 @@ export const verifyAuthToken: RequestHandler = async (
 
   res.send();
 };
+
+export const sendProfileInfo: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  res.json({
+    profile: req.user,
+  });
+};
+
+export const logout: RequestHandler = async (req: Request, res: Response) => {
+  res.clearCookie("authToken").send();
+};
