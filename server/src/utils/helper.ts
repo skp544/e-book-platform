@@ -1,5 +1,5 @@
 import { UserDoc } from "@/models/user-model";
-import { Response } from "express";
+import { Request, Response } from "express";
 
 type ErrorResponseType = {
   status: number;
@@ -18,7 +18,7 @@ export const sendErrorResponse = ({
   });
 };
 
-export const formatUserProfile = (user: UserDoc) => {
+export const formatUserProfile = (user: UserDoc): Request["user"] => {
   return {
     id: user._id.toString(),
     name: user.name,

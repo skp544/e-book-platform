@@ -5,6 +5,7 @@ import "@/db/connect";
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error-middleware";
 import cookieParser from "cookie-parser";
+import { fileParser } from "./middlewares/file-middleware";
 
 dotenv.config();
 
@@ -18,6 +19,11 @@ const PORT = process.env.PORT || 8000;
 
 app.get("/", (req, res) => {
   res.send("Hello World");
+});
+
+app.post("/test", fileParser, async (req, res) => {
+  console.log();
+  res.json({ data1: req.files, data2: req.body });
 });
 
 app.use("/auth", authRoutes);

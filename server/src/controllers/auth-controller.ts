@@ -5,6 +5,8 @@ import User from "@/models/user-model";
 import mail from "@/utils/mail";
 import { formatUserProfile, sendErrorResponse } from "@/utils/helper";
 import jwt from "jsonwebtoken";
+import cloudinary from "@/cloud/cloudinary";
+import { uploadAvatarToCloudinary } from "@/utils/fileUploader";
 
 export const generateLink: RequestHandler = async (
   req: Request,
@@ -115,4 +117,40 @@ export const sendProfileInfo: RequestHandler = async (
 
 export const logout: RequestHandler = async (req: Request, res: Response) => {
   res.clearCookie("authToken").send();
+};
+
+export const updateProfile: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const user = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      name: req.body.name,
+      signedUp: true,
+    },
+    { new: true }
+  );
+
+  if (!user) {
+    return sendErrorResponse({
+      status: 500,
+      message: "Something went wrong!",
+      res,
+    });
+  }
+
+  // if there is a file
+
+  const file = req.files.avatar;
+
+  if (!Array.isArray(file)) {
+    user.avatar = await uploadAvatarToCloudinary(file, user.avatar?.id);
+
+    await user.save();
+  }
+
+  res.json({
+    profile: formatUserProfile(user),
+  });
 };

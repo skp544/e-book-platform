@@ -25,3 +25,13 @@ export const emailValidationSchema = {
     })
     .email("Invalid email"),
 };
+
+export const newUserSchema = {
+  name: z
+    .string({
+      required_error: "Name is missing",
+      invalid_type_error: "Invalid name",
+    })
+    .min(3, "Name must be 3 characters long!")
+    .trim(),
+};
