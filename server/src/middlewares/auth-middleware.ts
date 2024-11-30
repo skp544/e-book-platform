@@ -1,6 +1,6 @@
 import User from "@/models/user-model";
 import { formatUserProfile, sendErrorResponse } from "@/utils/helper";
-import { RequestHandler } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import jwt from "jsonwebtoken";
 
 declare global {
@@ -13,12 +13,17 @@ declare global {
         role: "user" | "author";
         avatar?: string;
         signedUp: boolean;
+        authorId?: string;
       };
     }
   }
 }
 
-export const isAuth: RequestHandler = async (req, res, next) => {
+export const isAuth: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const authToken = req.cookies?.authToken;
 
   if (!authToken) {
@@ -46,4 +51,18 @@ export const isAuth: RequestHandler = async (req, res, next) => {
   req.user = formatUserProfile(user);
 
   next();
+};
+
+export const isAuthor: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.user.role === "author") next();
+  else
+    sendErrorResponse({
+      message: "Invalid Request",
+      res,
+      status: 401,
+    });
 };
