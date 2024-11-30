@@ -5,8 +5,11 @@ import User from "@/models/user-model";
 import mail from "@/utils/mail";
 import { formatUserProfile, sendErrorResponse } from "@/utils/helper";
 import jwt from "jsonwebtoken";
-import cloudinary from "@/cloud/cloudinary";
-import { uploadAvatarToCloudinary } from "@/utils/fileUploader";
+import {
+  updateAvatarToCloudinary,
+  updateAvatarToAWS,
+} from "@/utils/fileUploader";
+import slugify from "slugify";
 
 export const generateLink: RequestHandler = async (
   req: Request,
@@ -144,9 +147,18 @@ export const updateProfile: RequestHandler = async (
 
   const file = req.files.avatar;
 
-  if (!Array.isArray(file)) {
-    user.avatar = await uploadAvatarToCloudinary(file, user.avatar?.id);
+  if (file && !Array.isArray(file)) {
+    user.avatar = await updateAvatarToCloudinary(file, user.avatar?.id);
 
+    // for aws
+    /*
+    const uniqueFileName = `${user._id}-${slugify(req.body.name, {
+      lower: true,
+      replacement: "-",
+    })}.png`;
+
+    user.avatar = await updateAvatarToAWS(file, uniqueFileName, user.avatar?.id);
+*/
     await user.save();
   }
 
