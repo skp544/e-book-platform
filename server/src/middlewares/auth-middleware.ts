@@ -12,13 +12,13 @@ declare global {
         email: string;
         role: "user" | "author";
         avatar?: string;
+        signedUp: boolean;
       };
     }
   }
 }
 
 export const isAuth: RequestHandler = async (req, res, next) => {
-  console.log(req.cookies);
   const authToken = req.cookies?.authToken;
 
   if (!authToken) {

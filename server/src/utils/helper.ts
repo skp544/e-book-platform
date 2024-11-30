@@ -25,5 +25,6 @@ export const formatUserProfile = (user: UserDoc): Request["user"] => {
     email: user.email,
     role: user.role,
     avatar: user.avatar?.url,
+    signedUp: user.signedUp,
   };
 };

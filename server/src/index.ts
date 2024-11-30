@@ -1,6 +1,7 @@
 import "express-async-errors";
 import express from "express";
 import authRoutes from "./routes/auth-route";
+import authorRoutes from "./routes/author-route";
 import "@/db/connect";
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error-middleware";
@@ -27,6 +28,7 @@ app.post("/test", fileParser, async (req, res) => {
 });
 
 app.use("/auth", authRoutes);
+app.use("/author", authorRoutes);
 
 app.use(errorHandler);
 
