@@ -1,10 +1,15 @@
 import s3Client from "@/cloud/aws";
 import cloudinary from "@/cloud/cloudinary";
-import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import fs from "fs";
 import { File } from "formidable";
 import path from "path";
-import slugify from "slugify";
+import { generateS3ClientPublicUrl } from "./helper";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export const updateAvatarToCloudinary = async (
   file: File,
@@ -52,7 +57,7 @@ export const updateAvatarToAWS = async (
 
   return {
     id: uniqueFileName,
-    url: `https://${bucketName}.s3.amazonaws.com/${uniqueFileName}`,
+    url: generateS3ClientPublicUrl(bucketName, uniqueFileName),
   };
 };
 
@@ -77,4 +82,45 @@ export const uploadBookToLocalDir = async (
   const filePath = path.join(uniqueFileName);
 
   fs.writeFileSync(filePath, fs.readFileSync(file.filepath));
+};
+
+export const uploadBookToAWS = async (
+  filePath: string,
+  uniqueFileName: string
+) => {
+  const bucketName = process.env.AWS_BUCKET_NAME!;
+
+  const putCommand = new PutObjectCommand({
+    Bucket: bucketName,
+    Key: uniqueFileName,
+    Body: fs.readFileSync(filePath),
+  });
+
+  await s3Client.send(putCommand);
+
+  return {
+    id: uniqueFileName,
+    url: generateS3ClientPublicUrl(bucketName, uniqueFileName),
+  };
+};
+
+interface FileInfo {
+  bucket: string;
+  uniqueKey: string;
+  contentType: string;
+}
+
+export const generateFileUploadUrl = async (
+  client: S3Client,
+  fileInfo: FileInfo
+) => {
+  const { bucket, uniqueKey, contentType } = fileInfo;
+
+  const command = new PutObjectCommand({
+    Bucket: bucket,
+    Key: uniqueKey,
+    ContentType: contentType,
+  });
+
+  return await getSignedUrl(client, command);
 };

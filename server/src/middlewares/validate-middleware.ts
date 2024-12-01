@@ -59,6 +59,10 @@ export const newAuthorSchema = z.object({
 });
 
 export const newBookSchema = z.object({
+  uploadMethod: z.enum(["aws", "local"], {
+    required_error: "Please define a valid upload method",
+    message: "Invalid upload method needs to be either aws or local",
+  }),
   title: z
     .string({
       required_error: "Title is missing",
