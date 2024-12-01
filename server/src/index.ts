@@ -46,7 +46,7 @@ app.post("/test", async (req, res) => {
 
 app.use("/auth", authRoutes);
 app.use("/author", authorRoutes);
-app.use("/book", bookRoutes);
+app.use("/books", bookRoutes);
 
 app.use(errorHandler);
 

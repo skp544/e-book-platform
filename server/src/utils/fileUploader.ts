@@ -3,6 +3,8 @@ import cloudinary from "@/cloud/cloudinary";
 import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import fs from "fs";
 import { File } from "formidable";
+import path from "path";
+import slugify from "slugify";
 
 export const updateAvatarToCloudinary = async (
   file: File,
@@ -60,4 +62,19 @@ export const uploadCoverToCloudinary = async (file: File) => {
   );
 
   return { id: public_id, url: secure_url };
+};
+
+export const uploadBookToLocalDir = async (
+  file: File,
+  uniqueFileName: string
+) => {
+  const bookStoragePath = path.join(__dirname, "../books");
+
+  if (!fs.existsSync(bookStoragePath)) {
+    fs.mkdirSync(bookStoragePath);
+  }
+
+  const filePath = path.join(uniqueFileName);
+
+  fs.writeFileSync(filePath, fs.readFileSync(file.filepath));
 };
