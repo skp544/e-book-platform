@@ -58,7 +58,7 @@ export const newAuthorSchema = z.object({
     .optional(),
 });
 
-export const newBookSchema = z.object({
+export const commonBookSchema = {
   uploadMethod: z.enum(["aws", "local"], {
     required_error: "Please define a valid upload method",
     message: "Invalid upload method needs to be either aws or local",
@@ -130,39 +130,55 @@ export const newBookSchema = z.object({
       (price) => price.sale < price.mrp,
       "Sale price should be less than MRP!"
     ),
-  fileInfo: z
+};
+
+export const fileInfo = z
+  .string({
+    required_error: "File info is missing",
+    invalid_type_error: "Invalid file info",
+  })
+  .transform((value, ctx) => {
+    try {
+      return JSON.parse(value);
+    } catch (error) {
+      ctx.addIssue({ code: "custom", message: "Invalid File Info" });
+      return z.NEVER;
+    }
+  })
+  .pipe(
+    z.object({
+      name: z
+        .string({
+          required_error: "fileInfo.name is missing",
+          invalid_type_error: "Invalid fileInfo.name",
+        })
+        .trim(),
+      type: z
+        .string({
+          required_error: "fileInfo.type is missing!",
+          invalid_type_error: "Invalid fileInfo.type!",
+        })
+        .trim(),
+      size: z
+        .number({
+          required_error: "fileInfo.size is missing",
+          invalid_type_error: "Invalid fileInfo.size price",
+        })
+        .nonnegative("Invalid fileInfo.size price!"),
+    })
+  );
+
+export const newBookSchema = z.object({
+  ...commonBookSchema,
+  fileInfo,
+});
+
+export const updateBookSchema = z.object({
+  ...commonBookSchema,
+  slug: z
     .string({
-      required_error: "File info is missing",
-      invalid_type_error: "Invalid file info",
+      message: "Invalid Slug!",
     })
-    .transform((value, ctx) => {
-      try {
-        return JSON.parse(value);
-      } catch (error) {
-        ctx.addIssue({ code: "custom", message: "Invalid File Info" });
-        return z.NEVER;
-      }
-    })
-    .pipe(
-      z.object({
-        name: z
-          .string({
-            required_error: "fileInfo.name is missing",
-            invalid_type_error: "Invalid fileInfo.name",
-          })
-          .trim(),
-        type: z
-          .string({
-            required_error: "fileInfo.type is missing!",
-            invalid_type_error: "Invalid fileInfo.type!",
-          })
-          .trim(),
-        size: z
-          .number({
-            required_error: "fileInfo.size is missing",
-            invalid_type_error: "Invalid fileInfo.size price",
-          })
-          .nonnegative("Invalid fileInfo.size price!"),
-      })
-    ),
+    .trim(),
+  fileInfo: fileInfo.optional(),
 });
