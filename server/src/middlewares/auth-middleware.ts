@@ -2,7 +2,7 @@ import User from "@/models/user-model";
 import { formatUserProfile, sendErrorResponse } from "@/utils/helper";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import jwt from "jsonwebtoken";
-import {AddReviewRequestHandler} from "@/types";
+import {AddReviewRequestHandler, IsPurchasedByTheUserHandler} from "@/types";
 
 declare global {
   namespace Express {
@@ -68,16 +68,20 @@ export const isAuthor: RequestHandler = async (
     });
 };
 
-export  const isPurchasedByTheUser : AddReviewRequestHandler = async (req: Request, res: Response, next: NextFunction) => {
-  const user = await  User.findOne({_id: req.user.id, books: req.body.bookId})
+export const isPurchasedByTheUser: IsPurchasedByTheUserHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = await User.findOne({ _id: req.user.id, books: req.body.bookId });
 
   if (!user) {
     return sendErrorResponse({
       res,
       message: "Sorry you have not purchased this book yet",
-      status: 403
-    })
+      status: 403,
+    });
   }
 
-  next()
-}
+  next();
+};

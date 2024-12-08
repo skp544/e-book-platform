@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import { z, ZodObject, ZodRawShape } from "zod";
-import {isValidObjectId} from "mongoose";
+import { isValidObjectId } from "mongoose";
 
 export const validate = <T extends ZodRawShape>(
   schema: ZodObject<T>
@@ -185,33 +185,75 @@ export const updateBookSchema = z.object({
 });
 
 export const newReviewSchema = z.object({
-    rating: z
-        .number({
-            required_error: "Rating is missing!",
-            invalid_type_error: "Invalid rating!",
-        })
-        .nonnegative("Rating must be within 1 to 5.")
-        .min(1, "Minimum rating should be 1")
-        .max(5, "Maximum rating should be 5"),
-    content: z
-        .string({
-            invalid_type_error: "Invalid rating!",
-        })
-        .optional(),
-    bookId: z
-        .string({
-            required_error: "Book id is missing!",
-            invalid_type_error: "Invalid book id!",
-        })
-        .transform((arg, ctx) => {
-            console.log("arg", arg);
-            console.log("arg", !isValidObjectId(arg));
-            if (!isValidObjectId(arg)) {
+  rating: z
+    .number({
+      required_error: "Rating is missing!",
+      invalid_type_error: "Invalid rating!",
+    })
+    .nonnegative("Rating must be within 1 to 5.")
+    .min(1, "Minimum rating should be 1")
+    .max(5, "Maximum rating should be 5"),
+  content: z
+    .string({
+      invalid_type_error: "Invalid rating!",
+    })
+    .optional(),
+  bookId: z
+    .string({
+      required_error: "Book id is missing!",
+      invalid_type_error: "Invalid book id!",
+    })
+    .transform((arg, ctx) => {
+      console.log("arg", arg);
+      console.log("arg", !isValidObjectId(arg));
+      if (!isValidObjectId(arg)) {
+        ctx.addIssue({ code: "custom", message: "Invalid book id!" });
+        return z.NEVER;
+      }
+      console.log(arg, "ssss");
+      return arg;
+    }),
+});
 
-                ctx.addIssue({ code: "custom", message: "Invalid book id!" });
-                return z.NEVER;
-            }
-            console.log(arg, "ssss")
-            return arg;
-        }),
+export const historyValidationSchema = z.object({
+  bookId: z
+    .string({
+      required_error: "Book id is missing!",
+      invalid_type_error: "Invalid book id!",
+    })
+    .transform((arg, ctx) => {
+      console.log("arg", arg);
+      console.log("arg", !isValidObjectId(arg));
+      if (!isValidObjectId(arg)) {
+        ctx.addIssue({ code: "custom", message: "Invalid book id!" });
+        return z.NEVER;
+      }
+      console.log(arg, "ssss");
+      return arg;
+    }),
+  lastLocation: z
+    .string({
+      invalid_type_error: "Invalid Last Location!",
+    })
+    .trim()
+    .optional(),
+
+  highlights: z
+    .array(
+      z.object({
+        selection: z
+          .string({
+            required_error: "Highlight selection is missing",
+            invalid_type_error: "Invalid Highlight selection!",
+          })
+          .trim(),
+        fill: z
+          .string({
+            required_error: "Highlight fill is missing",
+            invalid_type_error: "Invalid Highlight fill!",
+          })
+          .trim(),
+      })
+    )
+    .optional(),
 });

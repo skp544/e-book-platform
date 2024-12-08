@@ -4,15 +4,13 @@ import authRoutes from "./routes/auth-route";
 import authorRoutes from "./routes/author-route";
 import bookRoutes from "./routes/book-route";
 import reviewRoutes from "./routes/review-route";
+import historyRoutes from "./routes/history-route";
 import "@/db/connect";
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error-middleware";
 import cookieParser from "cookie-parser";
-import { fileParser } from "./middlewares/file-middleware";
 import path from "path";
-import formidable from "formidable";
-import Review from "@/models/review-model";
-import {Types} from "mongoose";
+
 
 
 dotenv.config();
@@ -34,29 +32,15 @@ app.get("/", (req, res) => {
 
 app.get("/test", async (req, res) => {
   // console.log();
-  const [result] = await  Review.aggregate<{averageRating: number}>([
-    {
-      $match: {
-        book: new Types.ObjectId("6755845efa782256c1c8e52d")
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        averageRating: {$avg: "$rating"}
-      }
-    }
-  ])
 
-  const review = result.averageRating.toFixed(1)
-
-  res.json({review});
+  res.json({});
 });
 
 app.use("/auth", authRoutes);
 app.use("/author", authorRoutes);
 app.use("/books", bookRoutes);
 app.use("/review", reviewRoutes);
+app.use("/history", historyRoutes)
 
 app.use(errorHandler);
 
