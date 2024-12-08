@@ -1,10 +1,14 @@
-import { isAuth } from "@/middlewares/auth-middleware";
+import {isAuth, isPurchasedByTheUser} from "@/middlewares/auth-middleware";
 import { Router } from "express";
-import { addReview } from "@/controllers/review-controller";
+import {addReview, getReview} from "@/controllers/review-controller";
 import {newReviewSchema, validate} from "@/middlewares/validate-middleware";
 
 const router = Router();
 
-router.post("/add", isAuth, validate(newReviewSchema), addReview);
+router.post("/", isAuth, validate(newReviewSchema),
+    // isPurchasedByTheUser,
+    addReview);
+
+router.get("/:bookId", isAuth, getReview)
 
 export default router;

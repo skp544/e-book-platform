@@ -11,6 +11,8 @@ import cookieParser from "cookie-parser";
 import { fileParser } from "./middlewares/file-middleware";
 import path from "path";
 import formidable from "formidable";
+import Review from "@/models/review-model";
+import {Types} from "mongoose";
 
 
 dotenv.config();
@@ -30,20 +32,25 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.post("/test", async (req, res) => {
+app.get("/test", async (req, res) => {
   // console.log();
-  const form = formidable({
-    uploadDir: path.join(__dirname, "./books"),
-    filename(name, ext, part, form) {
-      // console.log("name", name);
-      // console.log("ext", ext);
-      // console.log("part", part);
-      // console.log("form", form);
-      return name + ".jpg";
+  const [result] = await  Review.aggregate<{averageRating: number}>([
+    {
+      $match: {
+        book: new Types.ObjectId("6755845efa782256c1c8e52d")
+      },
     },
-  });
-  await form.parse(req);
-  res.json({});
+    {
+      $group: {
+        _id: null,
+        averageRating: {$avg: "$rating"}
+      }
+    }
+  ])
+
+  const review = result.averageRating.toFixed(1)
+
+  res.json({review});
 });
 
 app.use("/auth", authRoutes);
