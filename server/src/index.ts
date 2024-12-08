@@ -3,6 +3,7 @@ import express from "express";
 import authRoutes from "./routes/auth-route";
 import authorRoutes from "./routes/author-route";
 import bookRoutes from "./routes/book-route";
+import reviewRoutes from "./routes/review-route";
 import "@/db/connect";
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error-middleware";
@@ -10,6 +11,7 @@ import cookieParser from "cookie-parser";
 import { fileParser } from "./middlewares/file-middleware";
 import path from "path";
 import formidable from "formidable";
+
 
 dotenv.config();
 
@@ -47,6 +49,7 @@ app.post("/test", async (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/author", authorRoutes);
 app.use("/books", bookRoutes);
+app.use("/review", reviewRoutes);
 
 app.use(errorHandler);
 

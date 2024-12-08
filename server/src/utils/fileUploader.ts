@@ -79,7 +79,7 @@ export const uploadBookToLocalDir = async (
     fs.mkdirSync(bookStoragePath);
   }
 
-  const filePath = path.join(uniqueFileName);
+  const filePath = path.join( bookStoragePath, uniqueFileName);
 
   fs.writeFileSync(filePath, fs.readFileSync(file.filepath));
 };
