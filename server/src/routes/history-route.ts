@@ -4,7 +4,7 @@ import {
   historyValidationSchema,
   validate,
 } from "@/middlewares/validate-middleware";
-import { updateBookHistory } from "@/controllers/history-controller";
+import {getBookHistory, updateBookHistory} from "@/controllers/history-controller";
 
 const router = Router();
 
@@ -15,5 +15,7 @@ router.post(
   // isPurchasedByTheUser,
   updateBookHistory
 );
+
+router.get("/:bookId", isAuth, getBookHistory)
 
 export default router;
