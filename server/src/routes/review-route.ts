@@ -9,7 +9,7 @@ router.post(
   "/",
   isAuth,
   validate(newReviewSchema),
-  // isPurchasedByTheUser,
+  isPurchasedByTheUser,
   addReview
 );
 

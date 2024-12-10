@@ -1,4 +1,4 @@
-import { createNewBook, updateBook } from "@/controllers/book-controller";
+import {createNewBook, getAllPurchasedBooks, updateBook} from "@/controllers/book-controller";
 import { isAuth, isAuthor } from "@/middlewares/auth-middleware";
 import { fileParser } from "@/middlewares/file-middleware";
 import {
@@ -27,5 +27,7 @@ router.patch(
   validate(updateBookSchema),
   updateBook
 );
+
+router.get("/list", isAuth, getAllPurchasedBooks);
 
 export default router;

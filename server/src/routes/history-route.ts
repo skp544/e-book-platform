@@ -12,7 +12,7 @@ router.post(
   "/",
   isAuth,
   validate(historyValidationSchema),
-  // isPurchasedByTheUser,
+  isPurchasedByTheUser,
   updateBookHistory
 );
 

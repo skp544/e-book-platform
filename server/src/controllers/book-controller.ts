@@ -1,5 +1,9 @@
 import Book, { BookDoc } from "@/models/book-model";
-import { CreateBookRequestHandler, UpdateBookRequestHandler } from "@/types";
+import {
+  CreateBookRequestHandler,
+  PopulatedBooks,
+  UpdateBookRequestHandler,
+} from "@/types";
 import {
   generateFileUploadUrl,
   uploadBookToAWS,
@@ -7,7 +11,7 @@ import {
   uploadCoverToCloudinary,
 } from "@/utils/fileUploader";
 import { formatFileSize, sendErrorResponse } from "@/utils/helper";
-import { Request, Response } from "express";
+import { Request, RequestHandler, Response } from "express";
 import { Types } from "mongoose";
 import slugify from "slugify";
 import Author from "@/models/author-model";
@@ -16,6 +20,7 @@ import path from "path";
 import fs from "fs";
 import cloudinary from "@/cloud/cloudinary";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import User from "@/models/user-model";
 
 export const createNewBook: CreateBookRequestHandler = async (
   req: Request,
@@ -256,5 +261,36 @@ export const updateBook: UpdateBookRequestHandler = async (
   res.status(200).json({
     success: true,
     message: "Book updated successfully",
+  });
+};
+
+export const getAllPurchasedBooks: RequestHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const user = await User.findById(req.user.id).populate<{
+    books: PopulatedBooks;
+  }>({
+    path: "books",
+    select: "author title cover slug",
+    populate: { path: "author", select: "slug name" },
+  });
+
+  if (!user) {
+    res.json({ data: [] });
+    return;
+  }
+
+  res.json({
+    data: user?.books.map((book: PopulatedBooks) => ({
+      id: book._id,
+      title: book.title,
+      cover: book.cover?.url,
+      slug: book.slug,
+      author: {
+        name: book.author.name,
+        slug: book.author.slug,
+      },
+    })),
   });
 };
