@@ -294,3 +294,54 @@ export const getAllPurchasedBooks: RequestHandler = async (
     })),
   });
 };
+
+export const getBooksPublicDetails: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const book = await Book.findOne({ slug: req.params.slug }).populate<{
+    author: PopulatedBooks["author"];
+  }>({ path: "author", select: "name slug" });
+
+  if (!book)
+    return sendErrorResponse({ status: 404, message: "Book not found!", res });
+
+  const {
+    _id,
+    title,
+    cover,
+    author,
+    slug,
+    description,
+    genre,
+    language,
+    publicationName,
+    publishedAt,
+    price: {mrp, sale},
+    fileInfo,
+  } = book;
+
+  res.json({
+    data: {
+      id: _id,
+      title,
+      genre,
+      language,
+      slug,
+      publicationName,
+      publishedAt: publishedAt.toISOString().split("T")[0],
+      description,
+      cover: cover?.url,
+      fileInfo: { size: fileInfo.size, key: fileInfo.id },
+      price: {
+        mrp: (mrp/100).toFixed(2),
+        sale: (sale/100).toFixed(2),
+      },
+      author: {
+        id: author._id,
+        name: author.name,
+        slug: author.slug
+      }
+    },
+  });
+};
