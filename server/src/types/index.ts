@@ -40,15 +40,6 @@ export type IsPurchasedByTheUserHandler = RequestHandler<
 >;
 
 export interface PopulatedBooks {
-  map(
-    arg0: (book: PopulatedBooks) => {
-      id: Schema.Types.ObjectId;
-      title: string;
-      cover: string | undefined;
-      slug: string;
-      author: { name: string; slug: string };
-    }
-  ): unknown;
   cover?: {
     url: string;
     id: string;
@@ -61,4 +52,20 @@ export interface PopulatedBooks {
   };
   title: string;
   slug: string;
+
+  map(
+    arg0: (book: PopulatedBooks) => {
+      id: Schema.Types.ObjectId;
+      title: string;
+      cover: string | undefined;
+      slug: string;
+      author: { name: string; slug: string };
+    }
+  ): unknown;
+}
+
+export  interface  PopulatedUser {
+    _id: ObjectId,
+    name: string,
+    avatar: {id: string, url: string}
 }

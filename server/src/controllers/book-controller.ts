@@ -318,7 +318,7 @@ export const getBooksPublicDetails: RequestHandler = async (
     publicationName,
     publishedAt,
     price: {mrp, sale},
-    fileInfo,
+    fileInfo,averageRating
   } = book;
 
   res.json({
@@ -332,6 +332,7 @@ export const getBooksPublicDetails: RequestHandler = async (
       publishedAt: publishedAt.toISOString().split("T")[0],
       description,
       cover: cover?.url,
+      rating: averageRating?.toFixed(1),
       fileInfo: { size: fileInfo.size, key: fileInfo.id },
       price: {
         mrp: (mrp/100).toFixed(2),
