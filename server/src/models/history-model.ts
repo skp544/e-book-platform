@@ -1,12 +1,10 @@
 import {Model, model, ObjectId, Schema} from "mongoose";
+import {Settings} from "@/types";
 
-interface  HistoryDoc {
+export  interface  HistoryDoc extends  Settings{
     book: ObjectId
     reader: ObjectId,
-    lastLocation: string,
-    highlights: {
-        selection: string, fill: string,
-    }[],
+
 
 }
 

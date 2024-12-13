@@ -65,3 +65,18 @@ export const getAuthorDetails: RequestHandler = async (
     socialLinks: author.socialLinks,
   });
 };
+
+export const updateAuthor: RequestAuthorHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const { body, user } = req;
+
+  const author = await Author.findByIdAndUpdate(user.authorId, {
+    name: body.name,
+    about: body.about,
+    socialLinks: body.socialLinks,
+  });
+
+  res.json({ message: "Your details updated successfully!", success: true });
+};

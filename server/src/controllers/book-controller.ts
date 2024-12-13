@@ -2,6 +2,7 @@ import Book, { BookDoc } from "@/models/book-model";
 import {
   CreateBookRequestHandler,
   PopulatedBooks,
+  Settings,
   UpdateBookRequestHandler,
 } from "@/types";
 import {
@@ -19,8 +20,11 @@ import s3Client from "@/cloud/aws";
 import path from "path";
 import fs from "fs";
 import cloudinary from "@/cloud/cloudinary";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import User from "@/models/user-model";
+import History from "@/models/history-model";
+import * as process from "node:process";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export const createNewBook: CreateBookRequestHandler = async (
   req: Request,
@@ -317,8 +321,9 @@ export const getBooksPublicDetails: RequestHandler = async (
     language,
     publicationName,
     publishedAt,
-    price: {mrp, sale},
-    fileInfo,averageRating
+    price: { mrp, sale },
+    fileInfo,
+    averageRating,
   } = book;
 
   res.json({
@@ -335,35 +340,100 @@ export const getBooksPublicDetails: RequestHandler = async (
       rating: averageRating?.toFixed(1),
       fileInfo: { size: fileInfo.size, key: fileInfo.id },
       price: {
-        mrp: (mrp/100).toFixed(2),
-        sale: (sale/100).toFixed(2),
+        mrp: (mrp / 100).toFixed(2),
+        sale: (sale / 100).toFixed(2),
       },
       author: {
         id: author._id,
         name: author.name,
-        slug: author.slug
-      }
+        slug: author.slug,
+      },
     },
   });
 };
 
-export const getBooksByGenre:RequestHandler = async (req,res) => {
-  const books = await Book.find({genre: req.params.genre}).limit(5)
+export const getBooksByGenre: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const books = await Book.find({ genre: req.params.genre }).limit(5);
 
+  res.json({
+    data: books.map((book) => {
+      const {
+        _id,
+        title,
+        cover,
+        averageRating,
+        slug,
+        genre,
+        price: { mrp, sale },
+      } = book;
+      return {
+        id: _id,
+        title,
+        genre,
+        slug,
+        cover: cover?.url,
+        rating: averageRating?.toFixed(1),
+        price: {
+          mrp: (mrp / 100).toFixed(2),
+          sale: (sale / 100).toFixed(2),
+        },
+      };
+    }),
+  });
+};
 
-  res.json({data: books.map(book=> {
-    const {_id, title, cover, averageRating, slug, genre, price :{mrp ,sale}} = book
-    return {
-      id: _id,
-      title,
-      genre,
-      slug,
-      cover: cover?.url,
-      rating: averageRating?.toFixed(1),
-      price: {
-        mrp: (mrp/100).toFixed(2),
-        sale: (sale/100).toFixed(2),
-      }
-    }
-    })})
-}
+export const generateBookAccessUrl: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const { slug } = req.params;
+
+  const book = await Book.findOne({ slug });
+
+  if (!book) {
+    return sendErrorResponse({ status: 404, message: "Book not found", res });
+  }
+
+  const user = await User.findOne({ _id: req.user.id, books: book._id });
+
+  if (!user) {
+    return sendErrorResponse({
+      status: 403,
+      message: "Unauthorized access",
+      res,
+    });
+  }
+
+  const history = await History.findOne({
+    reader: req.user.id,
+    book: book._id,
+  });
+
+  const settings: Settings = {
+    lastLocation: "",
+    highlights: [],
+  };
+
+  if (history) {
+    settings.highlights = history.highlights.map((h) => ({
+      fill: h.fill,
+      selection: h.selection,
+    }));
+    settings.lastLocation = history.lastLocation;
+  }
+
+  /*
+  // FOR AWS
+ const bookGetCommand =  new GetObjectCommand({Bucket: process.env.AWS_PRIVATE_BUCKET, Key: book.fileInfo.id})
+  const accessUrl = await  getSignedUrl(s3Client, bookGetCommand)
+   */
+
+  // FOR LOCAL
+
+  res.json({
+    data: { settings, url: `${process.env.BOOK_API_URL}/${book.fileInfo.id}` },
+  });
+};

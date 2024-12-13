@@ -4,7 +4,10 @@ import {
   historyValidationSchema,
   validate,
 } from "@/middlewares/validate-middleware";
-import {getBookHistory, updateBookHistory} from "@/controllers/history-controller";
+import {
+  getBookHistory,
+  updateBookHistory,
+} from "@/controllers/history-controller";
 
 const router = Router();
 
@@ -16,6 +19,6 @@ router.post(
   updateBookHistory
 );
 
-router.get("/:bookId", isAuth, getBookHistory)
+router.get("/:bookId", isAuth, getBookHistory);
 
 export default router;

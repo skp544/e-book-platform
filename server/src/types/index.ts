@@ -64,8 +64,16 @@ export interface PopulatedBooks {
   ): unknown;
 }
 
-export  interface  PopulatedUser {
-    _id: ObjectId,
-    name: string,
-    avatar: {id: string, url: string}
+export interface PopulatedUser {
+  _id: ObjectId;
+  name: string;
+  avatar: { id: string; url: string };
+}
+
+export interface Settings {
+  lastLocation: string;
+  highlights: {
+    selection: string;
+    fill: string;
+  }[];
 }

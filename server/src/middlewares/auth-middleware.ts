@@ -3,6 +3,7 @@ import { formatUserProfile, sendErrorResponse } from "@/utils/helper";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import jwt from "jsonwebtoken";
 import {AddReviewRequestHandler, IsPurchasedByTheUserHandler} from "@/types";
+import Book from "@/models/book-model";
 
 declare global {
   namespace Express {
@@ -59,6 +60,7 @@ export const isAuthor: RequestHandler = async (
   res: Response,
   next: NextFunction
 ) => {
+
   if (req.user.role === "author") next();
   else
     sendErrorResponse({
@@ -87,3 +89,42 @@ export const isPurchasedByTheUser: IsPurchasedByTheUserHandler = async (
 };
 
 
+export  const isValidReadingRequest:RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+  const url: string = req.url;
+  const regex = new RegExp("/([^/?]+.epub)");
+
+  const regexMatch= url.match(regex)
+
+  if (!regexMatch) {
+    return sendErrorResponse({
+        res,
+        message: "Invalid Request",
+        status: 403,
+    })
+  }
+
+  const bookFileId: string = regexMatch[1];
+
+  const book = await  Book.findOne({"fileInfo.id": bookFileId})
+
+  if (!book) {
+    return sendErrorResponse({
+        res,
+        message: "Invalid Request",
+        status: 403,
+    })
+  }
+
+  const user = await User.findOne({ _id: req.user.id, books: book._id });
+
+  if (!user) {
+    return sendErrorResponse({
+        res,
+        message: "Unauthorized Request!",
+        status: 403,
+    })
+  }
+
+  next()
+
+}

@@ -256,9 +256,8 @@ export const historyValidationSchema = z.object({
       })
     )
     .optional(),
-    remove: z.boolean({
-        invalid_type_error: "Remove must be a boolean value",
-        required_error: "Remove is missing!"
-    })
-
+  remove: z.boolean({
+    invalid_type_error: "Remove must be a boolean value",
+    required_error: "Remove is missing!",
+  }),
 });

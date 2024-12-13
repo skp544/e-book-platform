@@ -10,6 +10,7 @@ import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error-middleware";
 import cookieParser from "cookie-parser";
 import path from "path";
+import {isAuth, isValidReadingRequest} from "@/middlewares/auth-middleware";
 
 
 
@@ -24,7 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use("/books", express.static(publicPath));
+app.use("/books", isAuth, isValidReadingRequest, express.static(publicPath));
 
 app.get("/", (req, res) => {
   res.send("Hello World");
@@ -38,7 +39,7 @@ app.get("/test", async (req, res) => {
 
 app.use("/auth", authRoutes);
 app.use("/author", authorRoutes);
-app.use("/books", bookRoutes);
+app.use("/book", bookRoutes);
 app.use("/review", reviewRoutes);
 app.use("/history", historyRoutes)
 
