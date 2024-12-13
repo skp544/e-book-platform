@@ -346,3 +346,24 @@ export const getBooksPublicDetails: RequestHandler = async (
     },
   });
 };
+
+export const getBooksByGenre:RequestHandler = async (req,res) => {
+  const books = await Book.find({genre: req.params.genre}).limit(5)
+
+
+  res.json({data: books.map(book=> {
+    const {_id, title, cover, averageRating, slug, genre, price :{mrp ,sale}} = book
+    return {
+      id: _id,
+      title,
+      genre,
+      slug,
+      cover: cover?.url,
+      rating: averageRating?.toFixed(1),
+      price: {
+        mrp: (mrp/100).toFixed(2),
+        sale: (sale/100).toFixed(2),
+      }
+    }
+    })})
+}

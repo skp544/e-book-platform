@@ -1,4 +1,10 @@
-import {createNewBook, getAllPurchasedBooks, getBooksPublicDetails, updateBook} from "@/controllers/book-controller";
+import {
+  createNewBook,
+  getAllPurchasedBooks,
+  getBooksByGenre,
+  getBooksPublicDetails,
+  updateBook
+} from "@/controllers/book-controller";
 import { isAuth, isAuthor } from "@/middlewares/auth-middleware";
 import { fileParser } from "@/middlewares/file-middleware";
 import {
@@ -31,5 +37,7 @@ router.patch(
 router.get("/list", isAuth, getAllPurchasedBooks);
 
 router.get("/details/:slug", getBooksPublicDetails)
+
+router.get("/by-genre/:genre", getBooksByGenre)
 
 export default router;
