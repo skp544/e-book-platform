@@ -5,6 +5,7 @@ import authorRoutes from "./routes/author-route";
 import bookRoutes from "./routes/book-route";
 import reviewRoutes from "./routes/review-route";
 import historyRoutes from "./routes/history-route";
+import cartRoutes from "./routes/cart-route";
 import "@/db/connect";
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error-middleware";
@@ -42,6 +43,7 @@ app.use("/author", authorRoutes);
 app.use("/book", bookRoutes);
 app.use("/review", reviewRoutes);
 app.use("/history", historyRoutes)
+app.use("/cart", cartRoutes)
 
 app.use(errorHandler);
 
