@@ -9,6 +9,7 @@ import {
 import { RequestHandler } from "express";
 import { ObjectId, Schema } from "mongoose";
 import { z } from "zod";
+import Stripe from "stripe";
 
 type AuthorHandlerBody = z.infer<typeof newAuthorSchema>;
 type NewBookBody = z.infer<typeof newBookSchema>;
@@ -82,3 +83,10 @@ export interface Settings {
     fill: string;
   }[];
 }
+export  type StripeLineItems = Stripe.Checkout.SessionCreateParams.LineItem[]
+
+export  type options = {
+  customer: Stripe.CustomerCreateParams
+  line_items: StripeLineItems
+}
+
