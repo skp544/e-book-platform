@@ -1,6 +1,7 @@
 import { Model, model, Schema, Types } from "mongoose";
 
 export interface BookDoc {
+  _id: Types.ObjectId
   author: Types.ObjectId;
   title: string;
   slug: string;
@@ -95,6 +96,13 @@ const bookSchema = new Schema<BookDoc>({
     },
   },
 });
+
+bookSchema.pre("save", function (next){
+  const {mrp, sale} = this.price
+  this.price = {mrp: mrp * 100, sale: sale * 100}
+
+  next()
+})
 
 const Book = model("Book", bookSchema);
 

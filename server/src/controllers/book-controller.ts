@@ -46,6 +46,7 @@ export const createNewBook: CreateBookRequestHandler = async (
 
   const { cover, book } = files;
 
+  // @ts-ignore
   const newBook = new Book<BookDoc>({
     title,
     description,

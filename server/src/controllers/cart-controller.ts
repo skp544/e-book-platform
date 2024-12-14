@@ -5,6 +5,43 @@ import { sendErrorResponse } from "@/utils/helper";
 import { ObjectId } from "mongoose";
 
 export const updateCart: CartRequestHandler = async (req:Request, res:Response) => {
+
+  const {items} = req.body
+
+  let cart = await Cart.findOne({ userId: req.user.id });
+
+  if (!cart) {
+    // it means we need to create a new cart
+    cart = await Cart.create({ userId: req.user.id, items });
+  } else {
+    // it means we are updating the old cart
+    for (const item of items) {
+      const oldProduct = cart.items.find(
+          ({ product }) => item.product === product.toString()
+      );
+      if (oldProduct) {
+        oldProduct.quantity += item.quantity;
+        // if quantity is 0 or less then zero remove product from the cart
+        if (oldProduct.quantity <= 0) {
+          cart.items = cart.items.filter(
+              ({ product }) => oldProduct.product !== product
+          );
+        }
+      } else {
+        cart.items.push({
+          product: item.product as any,
+          quantity: item.quantity,
+        });
+      }
+    }
+
+    await cart.save();
+  }
+
+  res.json({data: {cart: cart._id}})
+
+
+
 };
 
 export const getCart: RequestHandler = async (req: Request, res: Response) => {
