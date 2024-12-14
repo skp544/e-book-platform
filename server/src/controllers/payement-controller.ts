@@ -55,7 +55,10 @@ export const handlePayment: RequestHandler = async (
           $push: { books: { $each: bookIds }, orders: { $each: [order._id] } },
         });
 
+        if (type === "checkout") {
         await Cart.findOneAndUpdate({ userId }, { items: [] });
+        }
+
       }
     }
   } catch (error) {

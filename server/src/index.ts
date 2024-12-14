@@ -9,6 +9,7 @@ import historyRoutes from "./routes/history-route";
 import cartRoutes from "./routes/cart-route";
 import checkoutRoutes from "@/routes/checkout-route";
 import webhookRoutes from "./routes/webhook-route";
+import orderRoutes from "./routes/order-route";
 import "@/db/connect";
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error-middleware";
@@ -49,7 +50,8 @@ app.use("/book", bookRoutes);
 app.use("/review", reviewRoutes);
 app.use("/history", historyRoutes)
 app.use("/cart", cartRoutes)
-app.use("/checkout", checkoutRoutes )
+app.use("/checkout", checkoutRoutes)
+app.use("/order", orderRoutes)
 
 app.use(errorHandler);
 
