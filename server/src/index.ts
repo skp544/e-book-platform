@@ -1,5 +1,5 @@
 import "express-async-errors";
-import  cors from "cors"
+import cors from "cors";
 import express from "express";
 import authRoutes from "./routes/auth-route";
 import authorRoutes from "./routes/author-route";
@@ -15,9 +15,7 @@ import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error-middleware";
 import cookieParser from "cookie-parser";
 import path from "path";
-import {isAuth, isValidReadingRequest} from "@/middlewares/auth-middleware";
-
-
+import { isAuth, isValidReadingRequest } from "@/middlewares/auth-middleware";
 
 dotenv.config();
 
@@ -26,8 +24,8 @@ const app = express();
 const publicPath = path.join(__dirname, "./books");
 console.log(publicPath);
 
-app.use(cors({origin: "http://localhost:5173", credentials: true}))
-app.use("/webhook", webhookRoutes)
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use("/webhook", webhookRoutes);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -48,10 +46,10 @@ app.use("/auth", authRoutes);
 app.use("/author", authorRoutes);
 app.use("/book", bookRoutes);
 app.use("/review", reviewRoutes);
-app.use("/history", historyRoutes)
-app.use("/cart", cartRoutes)
-app.use("/checkout", checkoutRoutes)
-app.use("/order", orderRoutes)
+app.use("/history", historyRoutes);
+app.use("/cart", cartRoutes);
+app.use("/checkout", checkoutRoutes);
+app.use("/order", orderRoutes);
 
 app.use(errorHandler);
 

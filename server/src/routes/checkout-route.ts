@@ -1,11 +1,11 @@
-import {Router} from "express";
-import {isAuth} from "@/middlewares/auth-middleware";
-import {checkout, instantCheckout} from "@/controllers/checkout-controller";
+import { Router } from "express";
+import { isAuth } from "@/middlewares/auth-middleware";
+import { checkout, instantCheckout } from "@/controllers/checkout-controller";
 
-const router = Router()
+const router = Router();
 
-router.post("/", isAuth, checkout)
+router.post("/", isAuth, checkout);
 
-router.post("/instant", isAuth, instantCheckout)
+router.post("/instant", isAuth, instantCheckout);
 
-export  default  router
+export default router;

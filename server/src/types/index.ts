@@ -43,8 +43,6 @@ export type IsPurchasedByTheUserHandler = RequestHandler<
 
 export type CartRequestHandler = RequestHandler<{}, {}, CartBody>;
 
-
-
 export interface PopulatedBooks {
   cover?: {
     url: string;
@@ -83,10 +81,40 @@ export interface Settings {
     fill: string;
   }[];
 }
-export  type StripeLineItems = Stripe.Checkout.SessionCreateParams.LineItem[]
+export type StripeLineItems = Stripe.Checkout.SessionCreateParams.LineItem[];
 
-export  type options = {
-  customer: Stripe.CustomerCreateParams
-  line_items: StripeLineItems
+export type options = {
+  customer: Stripe.CustomerCreateParams;
+  line_items: StripeLineItems;
+};
+
+export interface RecommendedBooks {
+  id: string;
+  title: string;
+  genre: string;
+  slug: string;
+  cover?: string;
+  rating?: string;
+  price: {
+    mrp: string;
+    sale: string;
+  };
 }
 
+export interface AggregationResult {
+  _id: ObjectId;
+  title: string;
+  genre: string;
+  price: {
+    mrp: number;
+    sale: number;
+    _id: ObjectId;
+  };
+  cover?: {
+    url: string;
+    id: string;
+    _id: ObjectId;
+  };
+  slug: string;
+  averageRatings?: number;
+}

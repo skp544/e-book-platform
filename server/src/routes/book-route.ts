@@ -2,7 +2,7 @@ import {
   createNewBook, generateBookAccessUrl,
   getAllPurchasedBooks,
   getBooksByGenre,
-  getBooksPublicDetails,
+  getBooksPublicDetails, getRecommendedBooks,
   updateBook
 } from "@/controllers/book-controller";
 import {isAuth, isAuthor, isPurchasedByTheUser} from "@/middlewares/auth-middleware";
@@ -41,5 +41,7 @@ router.get("/details/:slug", getBooksPublicDetails)
 router.get("/by-genre/:genre", getBooksByGenre)
 
 router.get("/read/:slug", isAuth, generateBookAccessUrl)
+
+router.get("/recommended/:bookId", getRecommendedBooks)
 
 export default router;

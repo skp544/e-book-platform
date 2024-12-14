@@ -1,7 +1,8 @@
 import Book, { BookDoc } from "@/models/book-model";
 import {
+  AggregationResult,
   CreateBookRequestHandler,
-  PopulatedBooks,
+  PopulatedBooks, RecommendedBooks,
   Settings,
   UpdateBookRequestHandler,
 } from "@/types";
@@ -13,7 +14,7 @@ import {
 } from "@/utils/fileUploader";
 import { formatFileSize, sendErrorResponse } from "@/utils/helper";
 import { Request, RequestHandler, Response } from "express";
-import { Types } from "mongoose";
+import { isValidObjectId, Types } from "mongoose";
 import slugify from "slugify";
 import Author from "@/models/author-model";
 import s3Client from "@/cloud/aws";
@@ -46,7 +47,6 @@ export const createNewBook: CreateBookRequestHandler = async (
 
   const { cover, book } = files;
 
-  // @ts-ignore
   const newBook = new Book<BookDoc>({
     title,
     description,
@@ -437,4 +437,74 @@ export const generateBookAccessUrl: RequestHandler = async (
   res.json({
     data: { settings, url: `${process.env.BOOK_API_URL}/${book.fileInfo.id}` },
   });
+};
+
+export const getRecommendedBooks: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const { bookId } = req.params;
+
+  if (!isValidObjectId(bookId)) {
+    return sendErrorResponse({ status: 422, message: "Book not found", res });
+  }
+
+  const book = await Book.findById(bookId);
+
+  if (!book) {
+    return sendErrorResponse({ status: 404, message: "Book not found", res });
+  }
+
+  const recommendedBooks = await Book.aggregate<AggregationResult>([
+    { $match: { genre: book.genre, _id: { $ne: book._id } } },
+    {
+      $lookup: {
+        localField: "_id",
+        from: "reviews",
+        foreignField: "book",
+        as: "reviews",
+      },
+    },
+    {
+      $addFields: {
+        averageRating: {
+          $avg: "$reviews.rating",
+        },
+      },
+    },
+    {
+      $sort: {
+        averageRating: -1,
+      },
+    },
+    {
+      $limit: 5,
+    },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        slug: 1,
+        genre: 1,
+        price: 1,
+        cover: 1,
+        averageRatings: 1,
+      },
+    },
+  ]);
+
+  const result = recommendedBooks.map<RecommendedBooks>((book) => ({
+    id: book._id.toString(),
+    title: book.title,
+    slug: book.slug,
+    genre: book.genre,
+    price: {
+      mrp: (book.price.mrp / 100).toFixed(2),
+      sale: (book.price.sale / 100).toFixed(2),
+    },
+    cover: book.cover?.url,
+    rating: book.averageRatings?.toFixed(1),
+  }));
+
+  res.json({data: result});
 };
