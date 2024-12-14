@@ -6,6 +6,7 @@
 - Node.js
 - Express.js
 - TypeScript
+- Stripe
 
 # <a name="quick-start">🤸 Quick Start</a>
 
@@ -54,6 +55,10 @@ JWT_SECRET=""
 NODE_ENV="development"
 BOOK_API_URL = http://localhost:8000/book
 
+APP_URL=http://localhost:5173
+PAYMENT_SUCCESS_URL=http://localhost:5173/payment-success?session_id={CHECKOUT_SESSION_ID}
+PAYMENT_CANCEL_URL=http://localhost:5173/payment-cancel
+
 AUTH_SUCCESS_URL = http://localhost:5173/profile
 
 CLOUD_NAME=""
@@ -65,6 +70,10 @@ AWS_SECRET_ACCESS_KEY = ""
 AWS_BUCKET_NAME = ""
 
 AWS_PRIVATE_BUCKET = ""
+
+STRIPE_SECRET_KEY=""
+STRIPE_PUBLIC_KEY=""
+STRIPE_WEBHOOK_SECRET=""
 ```
 
 Replace the values with your actual credentials
