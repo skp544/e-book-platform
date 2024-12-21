@@ -10,6 +10,8 @@ const SignUp = () => {
   const [showSuccessResponse, setShowSuccessResponse] = useState(false);
   const [busy, setBusy] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   const handleSubmit = async (e) => {
     e.preventDefault();
 

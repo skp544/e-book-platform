@@ -24,7 +24,16 @@ const app = express();
 const publicPath = path.join(__dirname, "./books");
 console.log(publicPath);
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:5175",
+    ],
+    credentials: true,
+  })
+);
 app.use("/webhook", webhookRoutes);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

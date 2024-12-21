@@ -27,7 +27,7 @@ git clone https://github.com/skp544/e-book-platform.git
 cd e-book-platform/server
 ```
 
-**Installation**
+**Installation For Server**
 
 Install the project dependencies using npm:
 

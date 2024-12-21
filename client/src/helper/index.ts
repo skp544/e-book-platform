@@ -16,6 +16,16 @@ export const catchError = (error) => {
       };
     }
 
+    // Handle errors with an 'errors' object
+    if (data && data.errors) {
+      const errorMessages = Object.values(data.errors).flat().join(", ");
+      return {
+        message: errorMessages || "An error occurred.",
+        success: false,
+        data,
+      };
+    }
+
     // If response data exists and is an object, return it
     if (data) {
       return {
