@@ -1,10 +1,11 @@
 import { FC } from "react";
 import { Button, Spinner } from "@nextui-org/react";
 import ProfileMenu from "./ProfileMenu.tsx";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface Props {
   busy?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   profile?: any;
 }
 
@@ -14,7 +15,9 @@ const ProfileOptions: FC<Props> = ({ profile, busy }) => {
   return profile ? (
     <ProfileMenu />
   ) : (
-    <Button as={Link} to={"sign-up"} variant={"bordered"}>Sign Up / In</Button>
+    <Button as={Link} to={"sign-up"} variant={"bordered"}>
+      Sign Up / In
+    </Button>
   );
 };
 
