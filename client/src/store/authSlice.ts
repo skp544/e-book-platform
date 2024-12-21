@@ -3,7 +3,7 @@ import {AuthState, Profile, RootState} from "../types";
 
 
 const initialState: AuthState = {
-  status: "unauthenticated",
+  status: "busy",
   profile: null,
 };
 

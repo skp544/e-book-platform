@@ -21,11 +21,20 @@ export const updateProfileApi = async (formData: FormData) => {
   }
 };
 
-export  const getProfileApi = async () => {
-    try {
-        const { data } = await client("/auth/profile");
-        return data;
-    } catch (e) {
-        return catchError(e);
-    }
-}
+export const getProfileApi = async () => {
+  try {
+    const { data } = await client("/auth/profile");
+    return data;
+  } catch (e) {
+    return catchError(e);
+  }
+};
+
+export const logoutApi = async () => {
+  try {
+    const { data } = await client.post("/auth/logout");
+    return data;
+  } catch (e) {
+    return catchError(e);
+  }
+};

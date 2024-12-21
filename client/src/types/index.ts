@@ -24,6 +24,7 @@ export  type AuthState = {
 export  interface IAuthContext {
     profile: AuthState["profile"]
     status: AuthState["status"]
+    signOut: () => void
 }
 
 export  type RootState  = ReturnType<typeof store.getState>

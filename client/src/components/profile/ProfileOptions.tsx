@@ -2,18 +2,16 @@ import { FC } from "react";
 import { Button, Spinner } from "@nextui-org/react";
 import ProfileMenu from "./ProfileMenu.tsx";
 import { Link } from "react-router-dom";
+import {Profile} from "../../types";
+import useAuth from "../../hooks/useAuth.ts";
 
-interface Props {
-  busy?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  profile?: any;
-}
 
-const ProfileOptions: FC<Props> = ({ profile, busy }) => {
-  if (busy) return <Spinner size={"sm"} />;
+const ProfileOptions= () => {
+  const {profile, status, signOut} = useAuth();
+  if (status === "busy") return <Spinner size={"sm"} />;
 
   return profile ? (
-    <ProfileMenu />
+    <ProfileMenu profile={profile} signOut={signOut} />
   ) : (
     <Button as={Link} to={"sign-up"} variant={"bordered"}>
       Sign Up / In

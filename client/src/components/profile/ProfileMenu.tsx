@@ -8,13 +8,14 @@ import {
 } from "@nextui-org/react";
 import { FC } from "react";
 import { Link } from "react-router-dom";
+import {Profile} from "../../types";
 
 interface LinkProps {
   title: string;
   to: string;
 }
 
-const DropdownLink: FC<LinkProps> = ({ title, to }) => {
+const DropdownLink: FC<LinkProps> = ({ title, to }  ) => {
   return (
     <Link className="px-2 py-1.5 w-full block" to={to}>
       {title}
@@ -22,12 +23,14 @@ const DropdownLink: FC<LinkProps> = ({ title, to }) => {
   );
 };
 
-const ProfileMenu = () => {
-  const name = "John Doe";
-  const email = "john@email.com";
-  const role = "user";
-  const avatar = "";
-  const signOut = () => {};
+interface Props {
+  profile: Profile
+    signOut: () => void
+}
+
+const ProfileMenu: FC<Props> = ({profile, signOut}) => {
+
+  const {email, role, avatar, name}  = profile
 
   return (
     <div className="flex items-center gap-4">
@@ -40,7 +43,7 @@ const ProfileMenu = () => {
               src: avatar,
             }}
             className="transition-transform"
-            name={name}
+            name={name?.split(" ")[0]}
           />
         </DropdownTrigger>
         <DropdownMenu aria-label="User Actions" variant="flat">
