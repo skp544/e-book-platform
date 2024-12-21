@@ -1,8 +1,11 @@
 import { Navigate, useSearchParams } from "react-router-dom";
 import { Spinner } from "@nextui-org/react";
+import  {useDispatch} from "react-redux";
+import {updateProfile} from "../store/authSlice.ts";
 
 const Verify = () => {
   const [searchParams] = useSearchParams();
+  const dispatch = useDispatch();
 
   const profileInfoString = searchParams.get("profile");
 
@@ -12,6 +15,8 @@ const Verify = () => {
       if (!profile.signedUp) {
         return <Navigate to={"/new-user"} />;
       }
+
+        dispatch(updateProfile(profile));
 
       return <Navigate to={"/"} />;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

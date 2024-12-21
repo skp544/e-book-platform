@@ -1,7 +1,7 @@
 import { Avatar, Button, Input } from "@nextui-org/react";
 import { ChangeEventHandler, FormEventHandler, useState } from "react";
 import { NewUserInfo } from "../types";
-import { updateProfile } from "../apis/auth.ts";
+import { updateProfileApi } from "../apis/auth.ts";
 
 function NewUser() {
   const [userInfo, setUserInfo] = useState<NewUserInfo>({
@@ -9,6 +9,7 @@ function NewUser() {
   });
   const [localAvatar, setLocalAvatar] = useState<string | undefined>(undefined);
   const [invalidForm, setInvalidForm] = useState<boolean>(false);
+  const [busy, setBusy] = useState<boolean>(false);
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = ({ target }) => {
     const { name, value, files } = target;
@@ -30,23 +31,24 @@ function NewUser() {
     }
   };
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
 
     if (userInfo.name.trim().length < 3) {
-        return setInvalidForm(true)
+      return setInvalidForm(true);
     } else {
-        setInvalidForm(false)
+      setInvalidForm(false);
     }
 
     formData.append("name", userInfo.name);
     if (userInfo?.avatar?.type.startsWith("image")) {
       formData.append("avatar", userInfo.avatar);
     }
-
-    const response = await updateProfile(formData);
+    setBusy(true);
+    const response = await updateProfileApi(formData);
+    setBusy(false);
 
     console.log("response", response);
   };
@@ -61,7 +63,7 @@ function NewUser() {
         <h1 className={"text-center text-xl font-semibold"}>
           You are almost there, Please fill out the details below.
         </h1>
-        <form onSubmit={handleSubmit} className={"w-full space-y-6 mt-6"}>
+        <form className={"w-full space-y-6 mt-6"}>
           <label
             htmlFor={"avatar"}
             className={"cursor-pointer flex items-center justify-center"}
@@ -93,7 +95,12 @@ function NewUser() {
             isInvalid={invalidForm}
             errorMessage={"Name must be at least 3 characters"}
           />
-          <Button type={"submit"} className={"w-full"}>
+          <Button
+            isLoading={busy}
+            type={"button"}
+            onClick={handleSubmit}
+            className={"w-full"}
+          >
             Sign Me Up
           </Button>
         </form>

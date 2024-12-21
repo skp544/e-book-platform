@@ -1,7 +1,7 @@
 import { Button, Input } from "@nextui-org/react";
 import { useState } from "react";
 import { emailRegex } from "../helper";
-import { generateLink } from "../apis/auth.ts";
+import { generateLinkApi } from "../apis/auth.ts";
 import { RiMailCheckLine } from "react-icons/ri";
 
 const SignUp = () => {
@@ -19,7 +19,7 @@ const SignUp = () => {
     setInvalidForm(false);
 
     setBusy(true);
-    const response = await generateLink({ email });
+    const response = await generateLinkApi({ email });
     setBusy(false);
 
     if (response.success) {
