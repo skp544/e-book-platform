@@ -1,8 +1,8 @@
-import { FC } from "react";
+
 import { Button, Spinner } from "@nextui-org/react";
 import ProfileMenu from "./ProfileMenu.tsx";
 import { Link } from "react-router-dom";
-import {Profile} from "../../types";
+
 import useAuth from "../../hooks/useAuth.ts";
 
 

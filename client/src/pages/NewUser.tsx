@@ -1,7 +1,8 @@
 import { Avatar, Button, Input } from "@nextui-org/react";
-import { ChangeEventHandler, FormEventHandler, useState } from "react";
+import { ChangeEventHandler, useState } from "react";
 import { NewUserInfo } from "../types";
 import { updateProfileApi } from "../apis/auth.ts";
+import toast from "react-hot-toast";
 
 function NewUser() {
   const [userInfo, setUserInfo] = useState<NewUserInfo>({
@@ -33,7 +34,6 @@ function NewUser() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formData = new FormData();
 
     if (userInfo.name.trim().length < 3) {
@@ -50,7 +50,11 @@ function NewUser() {
     const response = await updateProfileApi(formData);
     setBusy(false);
 
-    console.log("response", response);
+    if (!response.success) {
+      return toast.error(response.message);
+    }
+
+    toast.success(response.message);
   };
 
   return (

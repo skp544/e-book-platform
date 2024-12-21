@@ -3,6 +3,7 @@ import { useState } from "react";
 import { emailRegex } from "../helper";
 import { generateLinkApi } from "../apis/auth.ts";
 import { RiMailCheckLine } from "react-icons/ri";
+import toast from "react-hot-toast";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -22,6 +23,9 @@ const SignUp = () => {
     const response = await generateLinkApi({ email });
     setBusy(false);
 
+    if (!response.success) {
+      return  toast.error(response.message);
+    }
     if (response.success) {
       setShowSuccessResponse(true);
     }

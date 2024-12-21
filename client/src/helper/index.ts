@@ -11,7 +11,7 @@ export const catchError = (error) => {
     // Check if the response contains HTML (e.g., returned as a string containing HTML tags)
     if (typeof data === "string" && data.trim().startsWith("<!DOCTYPE html>")) {
       return {
-        message: `Unexpected HTML response received. Status: ${status}.`,
+        message: `Something went wrong. Please try again later.`,
         success: false,
       };
     }
