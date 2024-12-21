@@ -1,3 +1,5 @@
+import store from "../store";
+
 export  type  NewUserInfo = {
     name: string
     avatar?: File
@@ -23,3 +25,5 @@ export  interface IAuthContext {
     profile: AuthState["profile"]
     status: AuthState["status"]
 }
+
+export  type RootState  = ReturnType<typeof store.getState>
