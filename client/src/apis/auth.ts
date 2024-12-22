@@ -3,7 +3,7 @@ import client from "./client.ts";
 
 export const generateLinkApi = async (formData: { email: string }) => {
   try {
-    const { data } = await client.post("/auth/generate-link", formData);
+    const { data } = await client.post("/auth/generdate-link", formData);
 
     return data;
   } catch (e) {

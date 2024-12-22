@@ -8,14 +8,14 @@ import {
 } from "@nextui-org/react";
 import { FC } from "react";
 import { Link } from "react-router-dom";
-import {Profile} from "../../types";
+import { Profile } from "../../types";
 
 interface LinkProps {
   title: string;
   to: string;
 }
 
-const DropdownLink: FC<LinkProps> = ({ title, to }  ) => {
+const DropdownLink: FC<LinkProps> = ({ title, to }) => {
   return (
     <Link className="px-2 py-1.5 w-full block" to={to}>
       {title}
@@ -24,13 +24,12 @@ const DropdownLink: FC<LinkProps> = ({ title, to }  ) => {
 };
 
 interface Props {
-  profile: Profile
-    signOut: () => void
+  profile: Profile;
+  signOut: () => void;
 }
 
-const ProfileMenu: FC<Props> = ({profile, signOut}) => {
-
-  const {email, role, avatar, name}  = profile
+const ProfileMenu: FC<Props> = ({ profile, signOut }) => {
+  const { email, role, avatar, name } = profile;
 
   return (
     <div className="flex items-center gap-4">
@@ -78,10 +77,16 @@ const ProfileMenu: FC<Props> = ({profile, signOut}) => {
               </DropdownItem>
             </DropdownSection>
           ) : (
-            <DropdownItem textValue="empty item" className="p-0"></DropdownItem>
+            <DropdownItem
+              key={"emp"}
+              textValue="empty item"
+              className="p-0"
+            ></DropdownItem>
           )}
 
-          <DropdownItem key="configurations">Profile</DropdownItem>
+          <DropdownItem className={"p-0"} key="configurations">
+            <DropdownLink title="Profile" to="/profile" />
+          </DropdownItem>
           <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
           <DropdownItem onClick={signOut} key="logout" color="danger">
             Log Out

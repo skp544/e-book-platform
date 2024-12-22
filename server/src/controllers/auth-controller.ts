@@ -163,6 +163,8 @@ export const updateProfile: RequestHandler = async (
   }
 
   res.json({
-    profile: formatUserProfile(user),
+    message: "Profile updated successfully!",
+    success: true,
+    data: formatUserProfile(user),
   });
 };

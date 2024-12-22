@@ -1,7 +1,7 @@
 import { Navigate, useSearchParams } from "react-router-dom";
-import { Spinner } from "@nextui-org/react";
 import  {useDispatch} from "react-redux";
 import {updateProfile} from "../store/authSlice.ts";
+import LoadingSpinner from "../components/common/LoadingSpinner.tsx";
 
 const Verify = () => {
   const [searchParams] = useSearchParams();
@@ -25,11 +25,7 @@ const Verify = () => {
     }
   }
 
-  return (
-    <div className={"flex items-center justify-center p-10"}>
-      <Spinner color="warning" label="Verifying..." />;
-    </div>
-  );
+  return  <LoadingSpinner />
 };
 
 export default Verify;
