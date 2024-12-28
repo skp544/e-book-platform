@@ -33,7 +33,6 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     getProfileApi()
       .then(({ profile }) => {
-        console.log(profile);
         dispatch(updateProfile(profile));
         dispatch(updateAuthStatus("authenticated"));
       })
