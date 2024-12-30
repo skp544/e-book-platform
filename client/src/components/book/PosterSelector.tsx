@@ -1,11 +1,11 @@
-import { InputHTMLAttributes } from "react";
+import {InputHTMLAttributes, ReactNode} from "react";
 import  clsx from  "clsx"
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
   src?: string;
   isInvalid?: boolean;
   fileName?: string;
-  errorMessage?: string;
+  errorMessage?: ReactNode;
 }
 
 const PosterSelector = ({ fileName, errorMessage,  src,isInvalid, ...props }: Props) => {
@@ -26,7 +26,7 @@ const PosterSelector = ({ fileName, errorMessage,  src,isInvalid, ...props }: Pr
           )}
         </div>
         {fileName ? <p className={"w-28 text-sm truncate"}>{fileName}</p> : null}
-        {errorMessage ? <p className={"text-sm text-red-400"}>{errorMessage}</p> : null}
+        {errorMessage}
       </label>
     </div>
   );

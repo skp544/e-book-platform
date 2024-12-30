@@ -1,11 +1,17 @@
 import {
-  createNewBook, generateBookAccessUrl,
+  createNewBook,
+  generateBookAccessUrl,
   getAllPurchasedBooks,
   getBooksByGenre,
-  getBooksPublicDetails, getRecommendedBooks,
-  updateBook
+  getBooksPublicDetails,
+  getRecommendedBooks,
+  updateBook,
 } from "@/controllers/book-controller";
-import {isAuth, isAuthor, isPurchasedByTheUser} from "@/middlewares/auth-middleware";
+import {
+  isAuth,
+  isAuthor,
+  isPurchasedByTheUser,
+} from "@/middlewares/auth-middleware";
 import { fileParser } from "@/middlewares/file-middleware";
 import {
   newBookSchema,
@@ -36,12 +42,12 @@ router.patch(
 
 router.get("/list", isAuth, getAllPurchasedBooks);
 
-router.get("/details/:slug", getBooksPublicDetails)
+router.get("/details/:slug", getBooksPublicDetails);
 
-router.get("/by-genre/:genre", getBooksByGenre)
+router.get("/by-genre/:genre", getBooksByGenre);
 
-router.get("/read/:slug", isAuth, generateBookAccessUrl)
+router.get("/read/:slug", isAuth, generateBookAccessUrl);
 
-router.get("/recommended/:bookId", getRecommendedBooks)
+router.get("/recommended/:bookId", getRecommendedBooks);
 
 export default router;

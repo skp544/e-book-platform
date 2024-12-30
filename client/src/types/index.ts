@@ -30,7 +30,7 @@ export interface IAuthContext {
 export type RootState = ReturnType<typeof store.getState>;
 
 export interface BookDefaultForm {
-  file?: File;
+  file?: File | null;
   cover?: File;
   title: string;
   description: string;

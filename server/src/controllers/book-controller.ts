@@ -2,7 +2,8 @@ import Book, { BookDoc } from "@/models/book-model";
 import {
   AggregationResult,
   CreateBookRequestHandler,
-  PopulatedBooks, RecommendedBooks,
+  PopulatedBooks,
+  RecommendedBooks,
   Settings,
   UpdateBookRequestHandler,
 } from "@/types";
@@ -121,7 +122,8 @@ export const createNewBook: CreateBookRequestHandler = async (
 
   res.status(200).json({
     success: true,
-    message: "Book created successfully",
+    message:
+      "Congratulations! Your book has been published. It may `take a few minutes to reflect the changes.",
   });
 };
 
@@ -506,5 +508,5 @@ export const getRecommendedBooks: RequestHandler = async (
     rating: book.averageRatings?.toFixed(1),
   }));
 
-  res.json({data: result});
+  res.json({ data: result });
 };

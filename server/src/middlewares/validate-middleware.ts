@@ -262,7 +262,7 @@ export const historyValidationSchema = z.object({
   }),
 });
 
-export  const cartItemsSchema = z.object({
+export const cartItemsSchema = z.object({
   items: z.array(
     z.object({
       product: z
@@ -278,12 +278,10 @@ export  const cartItemsSchema = z.object({
 
           return arg;
         }),
-      quantity: z
-        .number({
-          required_error: "Quantity is missing!",
-          invalid_type_error: "Quantity must be number!",
-        })
-
+      quantity: z.number({
+        required_error: "Quantity is missing!",
+        invalid_type_error: "Quantity must be number!",
+      }),
     })
   ),
 });
