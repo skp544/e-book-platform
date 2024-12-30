@@ -9,7 +9,7 @@ interface Props {
 
 const ToolButton = ({ children,isActive, onClick}: Props) => {
 	return (
-		<button type={"button"} className={clsx("p-1 rounded", isActive && "bg-black text-white"  )}>
+		<button type={"button"} className={clsx("p-1 rounded", isActive && "bg-black text-white"  )}    onClick={onClick}>
 			{children}
 		</button>
 	);

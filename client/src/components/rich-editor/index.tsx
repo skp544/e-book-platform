@@ -43,7 +43,8 @@ const RichEditor = ({
 											isInvalid,
 											errorMessage,
 											className,
-											onChange}: Props) => {
+											onChange
+}: Props) => {
 	
 	const editor = useEditor({
 		extensions: [...extensions, Placeholder.configure({ placeholder })],
