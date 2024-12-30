@@ -330,6 +330,7 @@ export const getBooksPublicDetails: RequestHandler = async (
   } = book;
 
   res.json({
+    success: true,
     data: {
       id: _id,
       title,
