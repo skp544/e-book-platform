@@ -48,15 +48,31 @@ export  interface BookToSubmit {
   uploadMethod: "aws" | "local";
   language: string;
   publishedAt?: string;
+  slug?: string;
   publicationName: string;
   genre: string;
   price: {
     mrp: number;
     sale: number;
   };
-  fileInfo: {
+  fileInfo?: {
     type: string;
     name: string;
     size: number;
   };
 }
+
+export interface InitialBookToUpdate {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  genre: string;
+  language: string;
+  cover?: string;
+  price: { mrp: string; sale: string };
+  publicationName: string;
+  publishedAt: string;
+}
+
+

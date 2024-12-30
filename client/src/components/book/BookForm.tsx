@@ -8,17 +8,21 @@ import {
 import { genres, languages } from "../../helper/data.ts";
 import PosterSelector from "./PosterSelector.tsx";
 import RichEditor from "../rich-editor";
-import { BookDefaultForm, BookToSubmit } from "../../types";
-import { ChangeEventHandler, useState } from "react";
+import {
+  BookDefaultForm,
+  BookToSubmit,
+  InitialBookToUpdate,
+} from "../../types";
+import { ChangeEventHandler, useEffect, useState } from "react";
 import { parseDate } from "@internationalized/date";
-import { newBookSchema } from "../../schemas";
+import { newBookSchema, updateBookSchema } from "../../schemas";
 import ErrorList from "../common/ErrorList.tsx";
 import clsx from "clsx";
 
 interface Props {
   title: string;
   submitBtnTitle: string;
-  initialState?: unknown;
+  initialState?: InitialBookToUpdate;
   onSubmit(data: FormData): Promise<void>;
 }
 
@@ -32,7 +36,7 @@ const defaultBookInfo = {
   publicationName: "",
 };
 
-const BookForm = ({ title, submitBtnTitle, onSubmit }: Props) => {
+const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
   const [bookInfo, setBookInfo] = useState<BookDefaultForm>({
     ...defaultBookInfo,
   });
@@ -62,9 +66,9 @@ const BookForm = ({ title, submitBtnTitle, onSubmit }: Props) => {
 
     if (name === "cover" && file?.size) {
       try {
-      setCover(URL.createObjectURL(file));
+        setCover(URL.createObjectURL(file));
       } catch (e) {
-        setCover("")
+        setCover("");
       }
     }
     setBookInfo({ ...bookInfo, [name]: file });
@@ -151,7 +155,90 @@ const BookForm = ({ title, submitBtnTitle, onSubmit }: Props) => {
     setCover("");
   };
 
-  const handleBookUpdate = async () => {};
+  const handleBookUpdate = async () => {
+    const formData = new FormData();
+
+    const { file, cover } = bookInfo;
+
+    // Validate book file (must be epub type)
+    if (file && file?.type !== "application/epub+zip") {
+      return setErrors({
+        ...errors,
+        file: ["Please select a valid (.epub) file."],
+      });
+    } else {
+      setErrors({
+        ...errors,
+        file: undefined,
+      });
+    }
+
+    // Validate cover file
+    if (cover && !cover.type.startsWith("image/")) {
+      return setErrors({
+        ...errors,
+        cover: ["Please select a valid poster file."],
+      });
+    } else {
+      setErrors({
+        ...errors,
+        cover: undefined,
+      });
+    }
+
+    if (cover) {
+      formData.append("cover", cover);
+    }
+
+    // validate data for book creation
+    const bookToSend: BookToSubmit = {
+      title: bookInfo.title,
+      description: bookInfo.description,
+      genre: bookInfo.genre,
+      language: bookInfo.language,
+      publicationName: bookInfo.publicationName,
+      uploadMethod: "local",
+      publishedAt: bookInfo.publishedAt,
+      slug: initialState?.slug,
+      price: {
+        mrp: Number(bookInfo.mrp),
+        sale: Number(bookInfo.sale),
+      },
+    };
+
+    if (file) {
+      bookToSend.fileInfo = {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+      };
+    }
+
+    const result = updateBookSchema.safeParse(bookToSend);
+    if (!result.success) {
+      return setErrors(result.error.flatten().fieldErrors);
+    }
+
+    if (file && result.data.uploadMethod === "local") {
+      formData.append("book", file);
+    }
+
+    for (const key in bookToSend) {
+      type keyType = keyof typeof bookToSend;
+      const value = bookToSend[key as keyType];
+
+      if (typeof value === "string") {
+        formData.append(key, value);
+      }
+
+      if (typeof value === "object") {
+        formData.append(key, JSON.stringify(value));
+      }
+    }
+    setBusy(true);
+    await onSubmit(formData);
+    setBusy(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -161,9 +248,37 @@ const BookForm = ({ title, submitBtnTitle, onSubmit }: Props) => {
     } else {
       await handleBookPublish();
     }
-    // Do something with the bookInfo
-    console.log(bookInfo, "book info");
   };
+
+  useEffect(() => {
+    if (initialState) {
+      const {
+        title,
+        description,
+        language,
+        genre,
+        publicationName,
+        publishedAt,
+        price,
+        cover,
+      } = initialState;
+
+      if (cover) setCover(cover);
+
+      setBookInfo({
+        title,
+        description,
+        language,
+        genre,
+        publicationName,
+        publishedAt,
+        mrp: price.mrp,
+        sale: price.sale,
+      });
+
+      setIsForUpdate(true);
+    }
+  }, [initialState]);
 
   return (
     <form className={"p-10 space-y-6"}>
@@ -248,6 +363,7 @@ const BookForm = ({ title, submitBtnTitle, onSubmit }: Props) => {
         defaultSelectedKey={bookInfo.language}
         isInvalid={!!errors?.language}
         isRequired
+        selectedKey={bookInfo.language}
         errorMessage={<ErrorList errors={errors?.language} />}
         onSelectionChange={(key = "") => {
           setBookInfo({ ...bookInfo, language: key as string });
@@ -269,6 +385,7 @@ const BookForm = ({ title, submitBtnTitle, onSubmit }: Props) => {
         label={"Genre"}
         placeholder={"Select a Genre"}
         defaultSelectedKey={bookInfo.genre}
+        selectedKey={bookInfo.genre}
         isRequired
         onSelectionChange={(key = "") => {
           setBookInfo({ ...bookInfo, genre: key as string });

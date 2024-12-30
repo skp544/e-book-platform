@@ -1,4 +1,4 @@
-import { catchError } from "../helper/index.ts";
+import { catchError } from "../helper";
 import client from "./client.ts";
 
 export const createNewBookApi = async (formData: FormData) => {
@@ -10,3 +10,23 @@ export const createNewBookApi = async (formData: FormData) => {
     return catchError(e);
   }
 };
+
+export const bookDetailsApi = async (slug: string) => {
+  try {
+    const { data } = await client.get(`/book/details/${slug}`);
+
+    return data;
+  } catch (e) {
+    return catchError(e);
+  }
+}
+
+export  const updateBookApi = async (formData: FormData) => {
+  try {
+    const { data } = await client.patch("/book", formData);
+
+    return data;
+  } catch (e) {
+    return catchError(e);
+  }
+}

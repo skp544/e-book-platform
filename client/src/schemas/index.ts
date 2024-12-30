@@ -42,3 +42,8 @@ export  const newBookSchema = z.object({
 	...commonBookSchema,
 	fileInfo: fileInfoSchema,
 })
+
+export  const updateBookSchema = z.object({
+	...commonBookSchema,
+	fileInfo: fileInfoSchema.optional(),
+});

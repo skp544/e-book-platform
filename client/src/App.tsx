@@ -23,7 +23,7 @@ const App = () => {
           <Route path={"/update-profile"} element={<UpdateProfile />} />
           <Route path={"/profile"} element={<Profile />} />
           <Route path={"/create-new-book"} element={<NewBookForm />} />
-          <Route path={"/update-book"} element={<UpdateBookForm />} />
+          <Route path={"/update-book/:slug"} element={<UpdateBookForm />} />
         </Route>
 
         <Route element={<Guest />}>
