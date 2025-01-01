@@ -12,6 +12,8 @@ import NewBookForm from "./pages/NewBookForm.tsx";
 import UpdateBookForm from "./pages/UpdateBookForm.tsx";
 import NewAuthorRegistration from "./pages/NewAuthorRegistration.tsx";
 import UpdateAuthor from "./pages/UpdateAuthor.tsx";
+import Author from "./components/routes/Author.tsx";
+import NotFound from "./pages/NotFound.tsx";
 
 const App = () => {
   return (
@@ -19,18 +21,21 @@ const App = () => {
       <Routes>
         <Route path={"/"} element={<Home />} />
         <Route path={"/verify"} element={<Verify />} />
+        <Route path={"/not-found"} element={<NotFound />} />
 
         <Route element={<Private />}>
           <Route path={"/new-user"} element={<NewUser />} />
           <Route path={"/update-profile"} element={<UpdateProfile />} />
           <Route path={"/profile"} element={<Profile />} />
-          <Route path={"/create-new-book"} element={<NewBookForm />} />
-          <Route path={"/update-book/:slug"} element={<UpdateBookForm />} />
           <Route
             path={"/author-registration"}
             element={<NewAuthorRegistration />}
           />
           <Route path={"/update-author"} element={<UpdateAuthor />} />
+          <Route element={<Author />}>
+            <Route path={"/create-new-book"} element={<NewBookForm />} />
+            <Route path={"/update-book/:slug"} element={<UpdateBookForm />} />
+          </Route>
         </Route>
 
         <Route element={<Guest />}>
