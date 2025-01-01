@@ -42,7 +42,7 @@ const UpdateBookForm = () => {
     fetchBookDetails();
   }, []);
 
-  if (busy) return <LoadingSpinner />;
+  if (busy) return <LoadingSpinner verify={false} />;
 
   return (
     <div>

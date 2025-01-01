@@ -24,7 +24,7 @@ const SignUp = () => {
     setBusy(false);
 
     if (!response.success) {
-      return  toast.error(response.message);
+      return toast.error(response.message);
     }
     if (response.success) {
       setShowSuccessResponse(true);
@@ -72,7 +72,7 @@ const SignUp = () => {
           />
           <Button
             isLoading={busy}
-            onClick={handleSubmit}
+            onPress={handleSubmit}
             type={"button"}
             className={"w-full"}
           >

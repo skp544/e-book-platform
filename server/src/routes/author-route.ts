@@ -13,6 +13,6 @@ router.post("/register", isAuth, validate(newAuthorSchema), registerAuthor);
 
 router.patch("/", isAuth, isAuthor, validate(newAuthorSchema), updateAuthor);
 
-router.get("/:slug", getAuthorDetails);
+router.get("/:id", getAuthorDetails);
 
 export default router;

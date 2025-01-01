@@ -1,6 +1,6 @@
 import { Navigate, useSearchParams } from "react-router-dom";
-import  {useDispatch} from "react-redux";
-import {updateProfile} from "../store/authSlice.ts";
+import { useDispatch } from "react-redux";
+import { updateProfile } from "../store/authSlice.ts";
 import LoadingSpinner from "../components/common/LoadingSpinner.tsx";
 
 const Verify = () => {
@@ -16,7 +16,7 @@ const Verify = () => {
         return <Navigate to={"/new-user"} />;
       }
 
-        dispatch(updateProfile(profile));
+      dispatch(updateProfile(profile));
 
       return <Navigate to={"/"} />;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,7 +25,7 @@ const Verify = () => {
     }
   }
 
-  return  <LoadingSpinner />
+  return <LoadingSpinner verify={true} />;
 };
 
 export default Verify;

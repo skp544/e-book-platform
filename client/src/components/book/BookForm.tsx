@@ -448,7 +448,7 @@ const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
       <Button
         isLoading={busy}
         type={"button"}
-        onClick={handleSubmit}
+        onPress={handleSubmit}
         className={"w-full"}
       >
         {submitBtnTitle}

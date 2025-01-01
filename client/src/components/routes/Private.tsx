@@ -6,10 +6,10 @@ const Private = () => {
   const { status } = useAuth();
   const notLoggedIn = status === "unauthenticated";
 
-  const busy = status === "busy"
+  const busy = status === "busy";
 
   if (busy) {
-    return  <LoadingSpinner />
+    return <LoadingSpinner verify={true} />;
   }
 
   return notLoggedIn ? <Navigate to={"/sign-up"} /> : <Outlet />;

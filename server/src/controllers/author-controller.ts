@@ -39,16 +39,16 @@ export const registerAuthor: RequestAuthorHandler = async (
     role: "author",
   });
 
-  res.json({ message: "Thanks for registering as an author!" });
+  res.json({ success: true, message: "Thanks for registering as an author!" });
 };
 
 export const getAuthorDetails: RequestHandler = async (
   req: Request,
   res: Response
 ) => {
-  const { slug } = req.params;
+  const { id } = req.params;
 
-  const author = await Author.findOne({ slug });
+  const author = await Author.findOne({ _id: id });
 
   if (!author) {
     return sendErrorResponse({
@@ -59,10 +59,13 @@ export const getAuthorDetails: RequestHandler = async (
   }
 
   res.json({
-    id: author._id,
-    name: author.name,
-    about: author.about,
-    socialLinks: author.socialLinks,
+    data: {
+      id: author._id,
+      name: author.name,
+      about: author.about,
+      socialLinks: author.socialLinks,
+    },
+    success: true,
   });
 };
 

@@ -10,7 +10,7 @@ interface Props {
   btnTitle: string;
 }
 
-const NewUserForm = ({ name, avatar, onSubmit , title, btnTitle }: Props) => {
+const NewUserForm = ({ name, avatar, onSubmit, title, btnTitle }: Props) => {
   const [userInfo, setUserInfo] = useState<NewUserInfo>({
     name: "",
   });
@@ -63,9 +63,7 @@ const NewUserForm = ({ name, avatar, onSubmit , title, btnTitle }: Props) => {
           "w-96 border-2 p-5 rounded-md flex justify-center items-center flex-col"
         }
       >
-        <h1 className={"text-center text-xl font-semibold"}>
-            {title}
-        </h1>
+        <h1 className={"text-center text-xl font-semibold"}>{title}</h1>
         <form className={"w-full space-y-6 mt-6"}>
           <label
             htmlFor={"avatar"}
@@ -101,10 +99,10 @@ const NewUserForm = ({ name, avatar, onSubmit , title, btnTitle }: Props) => {
           <Button
             isLoading={busy}
             type={"button"}
-            onClick={handleSubmit}
+            onPress={handleSubmit}
             className={"w-full"}
           >
-              {btnTitle}
+            {btnTitle}
           </Button>
         </form>
       </div>

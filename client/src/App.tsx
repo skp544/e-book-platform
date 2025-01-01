@@ -10,6 +10,8 @@ import Guest from "./components/routes/Guest.tsx";
 import Private from "./components/routes/Private.tsx";
 import NewBookForm from "./pages/NewBookForm.tsx";
 import UpdateBookForm from "./pages/UpdateBookForm.tsx";
+import NewAuthorRegistration from "./pages/NewAuthorRegistration.tsx";
+import UpdateAuthor from "./pages/UpdateAuthor.tsx";
 
 const App = () => {
   return (
@@ -24,6 +26,11 @@ const App = () => {
           <Route path={"/profile"} element={<Profile />} />
           <Route path={"/create-new-book"} element={<NewBookForm />} />
           <Route path={"/update-book/:slug"} element={<UpdateBookForm />} />
+          <Route
+            path={"/author-registration"}
+            element={<NewAuthorRegistration />}
+          />
+          <Route path={"/update-author"} element={<UpdateAuthor />} />
         </Route>
 
         <Route element={<Guest />}>

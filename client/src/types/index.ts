@@ -42,7 +42,7 @@ export interface BookDefaultForm {
   sale: string;
 }
 
-export  interface BookToSubmit {
+export interface BookToSubmit {
   title: string;
   description: string;
   uploadMethod: "aws" | "local";
@@ -75,4 +75,12 @@ export interface InitialBookToUpdate {
   publishedAt: string;
 }
 
+export interface AuthorInfo {
+  name: string;
+  about: string;
+  socialLinks?: string[];
+}
 
+export interface AuthorInitialState extends AuthorInfo {
+  id: string;
+}

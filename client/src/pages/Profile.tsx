@@ -1,6 +1,6 @@
 import useAuth from "../hooks/useAuth.ts";
 import { Avatar, Button } from "@nextui-org/react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { BsPencilSquare } from "react-icons/bs";
 
 const Profile = () => {
@@ -11,6 +11,10 @@ const Profile = () => {
     return <Navigate to={"/sign-up"} />;
   }
 
+  const { role } = profile;
+
+  const isAuthor = role === "author";
+
   return (
     <div className={"flex flex-1 flex-col items-center "}>
       <div className={"flex min-w-96"}>
@@ -20,17 +24,30 @@ const Profile = () => {
           name={profile?.name}
           src={profile?.avatar}
         />
-        <div className={"pl-4"}>
+        <div className={"pl-4  flex-1"}>
           <p className={"text-xl font-semibold"}> {profile?.name}</p>
           <p>{profile?.email}</p>
-          <p>
-            Role:{" "}
-            <span className={"uppercase italic text-sm"}>{profile?.role}</span>
-          </p>
+          <div className={"flex justify-between items-center"}>
+            <p>
+              Role:{" "}
+              <span className={"uppercase italic text-sm"}>
+                {profile?.role}
+              </span>
+            </p>
+            {!isAuthor ? (
+              <Link className={"text-xs underline"} to={"/author-registration"}>
+                Became an author
+              </Link>
+            ) : (
+              <Link className={"text-xs underline"} to={"/update-author"}>
+                Update Author Bio
+              </Link>
+            )}
+          </div>
         </div>
         <Button
           className={"ml-auto"}
-          onClick={() => navigate("/update-profile")}
+          onPress={() => navigate("/update-profile")}
           variant={"flat"}
           isIconOnly
         >

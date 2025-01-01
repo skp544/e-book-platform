@@ -88,7 +88,7 @@ const ProfileMenu: FC<Props> = ({ profile, signOut }) => {
             <DropdownLink title="Profile" to="/profile" />
           </DropdownItem>
           <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-          <DropdownItem onClick={signOut} key="logout" color="danger">
+          <DropdownItem onPress={signOut} key="logout" color="danger">
             Log Out
           </DropdownItem>
         </DropdownMenu>
