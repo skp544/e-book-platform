@@ -9,10 +9,9 @@ import { FaBookReader } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaCartShopping } from "react-icons/fa6";
 import ProfileOptions from "../profile/ProfileOptions.tsx";
-
+import DarkModeSwitch from "./DarkModeSwitch.tsx";
 
 const Navbar = () => {
-
   return (
     <NextUiNavbar>
       <NavbarBrand>
@@ -23,6 +22,9 @@ const Navbar = () => {
       </NavbarBrand>
 
       <NavbarContent justify="end">
+        <NavbarItem>
+          <DarkModeSwitch />
+        </NavbarItem>
         <NavbarItem>
           <Link to="/cart">
             <Badge content={0} color={"danger"} shape={"circle"}>

@@ -12,7 +12,7 @@ const Guest = () => {
     return <LoadingSpinner verify={true} />;
   }
 
-  return isLoggedIn ? <Navigate to={"/sign-up"} /> : <Outlet />;
+  return !isLoggedIn ? <Navigate to={"/sign-up"} /> : <Outlet />;
 };
 
 export default Guest;

@@ -11,11 +11,7 @@ const SignUp = () => {
   const [showSuccessResponse, setShowSuccessResponse] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     if (!emailRegex.test(email)) return setInvalidForm(true);
     setInvalidForm(false);
 
@@ -57,7 +53,7 @@ const SignUp = () => {
           potential
         </h1>
 
-        <form className={"w-full space-y-6 mt-6"}>
+        <div className={"w-full space-y-6 mt-6"}>
           <Input
             label="Email"
             placeholder="john@email.com"
@@ -78,7 +74,7 @@ const SignUp = () => {
           >
             Send Me The Link
           </Button>
-        </form>
+        </div>
       </div>
     </div>
   );
