@@ -105,3 +105,29 @@ export interface IBookByGenre {
     sale: number;
   };
 }
+
+export interface IBookPublicDetails {
+  id: string;
+  title: string;
+  genre: string;
+  language: string;
+  slug: string;
+  publicationName: string;
+  publishedAt: string;
+  description: string;
+  cover: string | undefined;
+  rating: string | undefined;
+  fileInfo: {
+    size: string;
+    key: string;
+  };
+  price: {
+    mrp: string;
+    sale: string;
+  };
+  author: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+}

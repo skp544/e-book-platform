@@ -49,8 +49,17 @@ export const catchError = (error) => {
   };
 };
 
-export const calculateDiscount = (price: { mrp: number; sale: number }) => {
+export const calculateDiscount = (price: {
+  mrp: number | string;
+  sale: number | string;
+}) => {
   const { mrp, sale } = price;
+
+  if (typeof mrp === "string" || typeof sale === "string") {
+    const mrpNumber = Number(mrp);
+    const saleNumber = Number(sale);
+    return Math.round(((mrpNumber - saleNumber) / mrpNumber) * 100);
+  }
 
   return Math.round(((mrp - sale) / mrp) * 100);
 };

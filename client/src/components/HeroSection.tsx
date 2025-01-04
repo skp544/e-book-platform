@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { featuredBooksApi } from "../apis/book";
 import { FeaturedBook } from "../types";
 import Slider from "react-slick";
-import LoadingSpinner from "./common/LoadingSpinner";
-import { Button, Skeleton } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import Skeletons from "./skeletons";
+import toast from "react-hot-toast";
 
 const HeroSection = () => {
   const [featuredBooks, setFeaturedBooks] = useState<FeaturedBook[]>([]);
@@ -14,9 +14,10 @@ const HeroSection = () => {
 
   const fetchFeaturedBooks = async () => {
     const response = await featuredBooksApi();
-
+    if (!response.success) {
+      return toast.error(response.message);
+    }
     setBusy(false);
-
     setFeaturedBooks(response.data);
   };
 

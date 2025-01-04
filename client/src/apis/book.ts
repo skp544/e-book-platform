@@ -50,3 +50,13 @@ export const booksByGenreApi = async (genre: string) => {
     return catchError(e);
   }
 };
+
+export const booksByPublicDetailApi = async (slug: string) => {
+  try {
+    const { data } = await client.get(`/book/details/${slug}`);
+
+    return data;
+  } catch (e) {
+    return catchError(e);
+  }
+};

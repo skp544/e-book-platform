@@ -14,6 +14,7 @@ import NewAuthorRegistration from "./pages/NewAuthorRegistration.tsx";
 import UpdateAuthor from "./pages/UpdateAuthor.tsx";
 import Author from "./components/routes/Author.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import SingleBook from "./pages/SingleBook.tsx";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
         <Route path={"/"} element={<Home />} />
         <Route path={"/verify"} element={<Verify />} />
         <Route path={"/not-found"} element={<NotFound />} />
+        <Route path={"/book/:slug"} element={<SingleBook />} />
 
         <Route element={<Private />}>
           <Route path={"/new-user"} element={<NewUser />} />
