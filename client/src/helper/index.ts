@@ -48,3 +48,16 @@ export const catchError = (error) => {
     success: false,
   };
 };
+
+export const calculateDiscount = (price: { mrp: number; sale: number }) => {
+  const { mrp, sale } = price;
+
+  return Math.round(((mrp - sale) / mrp) * 100);
+};
+
+export const formatPrice = (amount: number) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(amount);
+};

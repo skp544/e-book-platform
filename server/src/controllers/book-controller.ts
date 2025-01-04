@@ -27,6 +27,7 @@ import User from "@/models/user-model";
 import History from "@/models/history-model";
 import * as process from "node:process";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { featuredBookData } from "@/utils/data";
 
 export const createNewBook: CreateBookRequestHandler = async (
   req: Request,
@@ -386,6 +387,7 @@ export const getBooksByGenre: RequestHandler = async (
         },
       };
     }),
+    success: true,
   });
 };
 
@@ -510,4 +512,27 @@ export const getRecommendedBooks: RequestHandler = async (
   }));
 
   res.json({ data: result });
+};
+
+export const getAllBooks: RequestHandler = async (req, res) => {
+  const books = await Book.find();
+
+  res.status(200).json({ data: books });
+};
+
+export const getFeaturedBooks: RequestHandler = async (req, res) => {
+  const books = await Book.find();
+
+  const data = books.slice(0, 4).map((book, i) => {
+    const { title, cover, slug, genre } = book;
+    return {
+      title,
+      genre,
+      slug,
+      cover: cover?.url,
+      slogan: featuredBookData[i].slogan,
+    };
+  });
+
+  res.status(200).json({ success: true, data });
 };

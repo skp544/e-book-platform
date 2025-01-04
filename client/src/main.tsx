@@ -7,7 +7,9 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store";
 import AuthProvider from "./context/AuthProvider.tsx";
-import {Toaster} from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -16,8 +18,7 @@ createRoot(document.getElementById("root")!).render(
         <AuthProvider>
           <NextUIProvider>
             <App />
-              <Toaster  position="top-center"
-                        reverseOrder={false} />
+            <Toaster position="top-center" reverseOrder={false} />
           </NextUIProvider>
         </AuthProvider>
       </Provider>

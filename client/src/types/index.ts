@@ -84,3 +84,24 @@ export interface AuthorInfo {
 export interface AuthorInitialState extends AuthorInfo {
   id: string;
 }
+
+export interface FeaturedBook {
+  title: string;
+  genre: string;
+  slug: string;
+  cover?: string;
+  slogan: string;
+}
+
+export interface IBookByGenre {
+  id: string;
+  title: string;
+  genre: string;
+  slug: string;
+  cover?: string;
+  rating?: number;
+  price: {
+    mrp: number;
+    sale: number;
+  };
+}

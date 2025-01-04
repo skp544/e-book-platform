@@ -1,9 +1,11 @@
 import {
   createNewBook,
   generateBookAccessUrl,
+  getAllBooks,
   getAllPurchasedBooks,
   getBooksByGenre,
   getBooksPublicDetails,
+  getFeaturedBooks,
   getRecommendedBooks,
   updateBook,
 } from "@/controllers/book-controller";
@@ -49,5 +51,9 @@ router.get("/by-genre/:genre", getBooksByGenre);
 router.get("/read/:slug", isAuth, generateBookAccessUrl);
 
 router.get("/recommended/:bookId", getRecommendedBooks);
+
+router.get("/featured", getFeaturedBooks);
+
+router.get("/get-all-books", getAllBooks);
 
 export default router;

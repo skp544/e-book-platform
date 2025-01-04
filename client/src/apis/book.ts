@@ -19,9 +19,9 @@ export const bookDetailsApi = async (slug: string) => {
   } catch (e) {
     return catchError(e);
   }
-}
+};
 
-export  const updateBookApi = async (formData: FormData) => {
+export const updateBookApi = async (formData: FormData) => {
   try {
     const { data } = await client.patch("/book", formData);
 
@@ -29,4 +29,24 @@ export  const updateBookApi = async (formData: FormData) => {
   } catch (e) {
     return catchError(e);
   }
-}
+};
+
+export const featuredBooksApi = async () => {
+  try {
+    const { data } = await client.get("/book/featured");
+
+    return data;
+  } catch (e) {
+    return catchError(e);
+  }
+};
+
+export const booksByGenreApi = async (genre: string) => {
+  try {
+    const { data } = await client.get(`/book/by-genre/${genre}`);
+
+    return data;
+  } catch (e) {
+    return catchError(e);
+  }
+};
