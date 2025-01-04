@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { booksByGenreApi } from "../apis/book";
 import { IBookByGenre } from "../types";
-import { Chip } from "@nextui-org/react";
+import { Chip, Skeleton } from "@nextui-org/react";
 import DividerWithTitle from "./common/DividerWithTitle";
 import { Link } from "react-router-dom";
 import { FaStar } from "react-icons/fa6";
 import { calculateDiscount, formatPrice } from "../helper";
+import Skeletons from "./skeletons";
 
 interface Props {
   genre: string;
@@ -14,6 +15,7 @@ interface Props {
 const BookByGenre = ({ genre }: Props) => {
   const [books, setBooks] = useState<IBookByGenre[]>([]);
   const [busy, setBusy] = useState(true);
+  const fakeData = new Array(5).fill("");
 
   const fetchBooksByGenre = async () => {
     const response = await booksByGenreApi(genre);
@@ -24,6 +26,10 @@ const BookByGenre = ({ genre }: Props) => {
   useEffect(() => {
     fetchBooksByGenre();
   }, [genre]);
+
+  if (busy) {
+    return <Skeletons.BookList />;
+  }
 
   return (
     <div>

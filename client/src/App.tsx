@@ -35,12 +35,12 @@ const App = () => {
           <Route element={<Author />}>
             <Route path={"/create-new-book"} element={<NewBookForm />} />
             <Route path={"/update-book/:slug"} element={<UpdateBookForm />} />
-            <Route path="*" element={<NotFound />} />
           </Route>
         </Route>
 
         <Route element={<Guest />}>
           <Route path={"/sign-up"} element={<SignUp />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </Container>

@@ -3,9 +3,10 @@ import { featuredBooksApi } from "../apis/book";
 import { FeaturedBook } from "../types";
 import Slider from "react-slick";
 import LoadingSpinner from "./common/LoadingSpinner";
-import { Button } from "@nextui-org/react";
+import { Button, Skeleton } from "@nextui-org/react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import Skeletons from "./skeletons";
 
 const HeroSection = () => {
   const [featuredBooks, setFeaturedBooks] = useState<FeaturedBook[]>([]);
@@ -24,7 +25,7 @@ const HeroSection = () => {
   }, []);
 
   if (busy) {
-    return <LoadingSpinner verify={false} />;
+    return <Skeletons.HeroSection />;
   }
 
   const settings = {
