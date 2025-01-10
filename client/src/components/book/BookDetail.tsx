@@ -11,17 +11,24 @@ import {
 } from "react-icons/fa6";
 import { TbShoppingCartPlus } from "react-icons/tb";
 import RichEditor from "../rich-editor";
+import useCart from "../../hooks/useCart";
 
 interface Props {
   book?: IBookPublicDetails;
 }
 
 const BookDetail = ({ book }: Props) => {
+  const { updateCart, pending } = useCart();
+
   if (!book) {
     return null;
   }
 
   const alreadyPurchased = false;
+
+  const handleCartUpdate = () => {
+    updateCart({ product: book, quantity: 1 });
+  };
 
   const {
     id,
@@ -135,8 +142,18 @@ const BookDetail = ({ book }: Props) => {
             </Button>
           ) : (
             <>
-              <Button startContent={<TbShoppingCartPlus />}>Add to Cart</Button>
-              <Button variant="flat">Buy now</Button>
+              <Button
+                variant="light"
+                type="button"
+                isLoading={pending}
+                onPress={handleCartUpdate}
+                startContent={<TbShoppingCartPlus />}
+              >
+                Add to Cart
+              </Button>
+              <Button isLoading={pending} type="button" variant="flat">
+                Buy now
+              </Button>
             </>
           )}
         </div>

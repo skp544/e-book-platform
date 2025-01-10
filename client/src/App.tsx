@@ -15,6 +15,7 @@ import UpdateAuthor from "./pages/UpdateAuthor.tsx";
 import Author from "./components/routes/Author.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import SingleBook from "./pages/SingleBook.tsx";
+import Cart from "./pages/Cart.tsx";
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
 
         <Route element={<Private />}>
           <Route path={"/new-user"} element={<NewUser />} />
+          <Route path={"/cart"} element={<Cart />} />
           <Route path={"/update-profile"} element={<UpdateProfile />} />
           <Route path={"/profile"} element={<Profile />} />
           <Route

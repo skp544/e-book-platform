@@ -4,9 +4,11 @@ import Cart from "@/models/cart-model";
 import { sendErrorResponse } from "@/utils/helper";
 import { ObjectId } from "mongoose";
 
-export const updateCart: CartRequestHandler = async (req:Request, res:Response) => {
-
-  const {items} = req.body
+export const updateCart: CartRequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const { items } = req.body;
 
   let cart = await Cart.findOne({ userId: req.user.id });
 
@@ -17,14 +19,14 @@ export const updateCart: CartRequestHandler = async (req:Request, res:Response) 
     // it means we are updating the old cart
     for (const item of items) {
       const oldProduct = cart.items.find(
-          ({ product }) => item.product === product.toString()
+        ({ product }) => item.product === product.toString()
       );
       if (oldProduct) {
         oldProduct.quantity += item.quantity;
         // if quantity is 0 or less then zero remove product from the cart
         if (oldProduct.quantity <= 0) {
           cart.items = cart.items.filter(
-              ({ product }) => oldProduct.product !== product
+            ({ product }) => oldProduct.product !== product
           );
         }
       } else {
@@ -38,10 +40,11 @@ export const updateCart: CartRequestHandler = async (req:Request, res:Response) 
     await cart.save();
   }
 
-  res.json({data: {cart: cart._id}})
-
-
-
+  res.json({
+    success: true,
+    message: "Cart updated!",
+    data: { cart: cart._id },
+  });
 };
 
 export const getCart: RequestHandler = async (req: Request, res: Response) => {
@@ -89,8 +92,11 @@ export const getCart: RequestHandler = async (req: Request, res: Response) => {
   });
 };
 
-export  const clearCart: RequestHandler = async (req: Request, res: Response) => {
-  await  Cart.findOneAndUpdate({userId: req.user.id}, {items: []})
+export const clearCart: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  await Cart.findOneAndUpdate({ userId: req.user.id }, { items: [] });
 
-  res.json({success: true, message: "Cart cleared!"})
-}
+  res.json({ success: true, message: "Cart cleared!" });
+};

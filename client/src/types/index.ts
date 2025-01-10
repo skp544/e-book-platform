@@ -131,3 +131,29 @@ export interface IBookPublicDetails {
     slug: string;
   };
 }
+
+export type CartItem = {
+  product: IBookPublicDetails;
+  quantity: number;
+};
+
+export interface ICartState {
+  id?: string;
+  items: CartItem[];
+}
+
+export interface ICartContext {
+  id?: string;
+  items: CartItem[];
+  updateCart(item: CartItem): void;
+  pending: boolean;
+  totalCount: number;
+}
+
+export type UpdateItem = {
+  product: string;
+  quantity: number;
+};
+export interface IUpdateCartApi {
+  items: UpdateItem[];
+}
