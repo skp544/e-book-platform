@@ -122,8 +122,8 @@ export interface IBookPublicDetails {
     key: string;
   };
   price: {
-    mrp: string;
-    sale: string;
+    mrp: string | number;
+    sale: string | number;
   };
   author: {
     id: string;
@@ -132,10 +132,12 @@ export interface IBookPublicDetails {
   };
 }
 
-export type CartItem = {
-  product: IBookPublicDetails;
-  quantity: number;
-};
+export type CartItem =
+  | {
+      product: IBookPublicDetails;
+      quantity: number;
+    }
+  | CartItemAPI;
 
 export interface ICartState {
   id?: string;
@@ -148,6 +150,9 @@ export interface ICartContext {
   updateCart(item: CartItem): void;
   pending: boolean;
   totalCount: number;
+  subTotal: number;
+  totalPrice: number;
+  fetching: boolean;
 }
 
 export type UpdateItem = {
@@ -156,4 +161,25 @@ export type UpdateItem = {
 };
 export interface IUpdateCartApi {
   items: UpdateItem[];
+}
+export interface CartItemAPI {
+  quantity: number;
+  product: {
+    id: string;
+    title: string;
+    slug: string;
+    cover?: string;
+    price: {
+      mrp: string | number;
+      sale: string | number;
+    };
+  };
+}
+export interface CartApiResponse {
+  success?: boolean;
+  message?: string;
+  data: {
+    id: string;
+    items: CartItemAPI[];
+  };
 }

@@ -13,7 +13,7 @@ const slice = createSlice({
       state.id = payload;
     },
 
-    updateCart(state, { payload }: PayloadAction<ICartState>) {
+    updateCartState(state, { payload }: PayloadAction<ICartState>) {
       state.id = payload.id;
       state.items = payload.items;
     },
@@ -43,11 +43,19 @@ export const getCartState = createSelector(
         total += cartItem.quantity;
         return total;
       }, 0),
+      subTotal: cart.items.reduce((total, cartItem) => {
+        total += Number(cartItem.product.price.mrp) * cartItem.quantity;
+        return total;
+      }, 0),
+      totalPrice: cart.items.reduce((total, cartItem) => {
+        total += Number(cartItem.product.price.sale) * cartItem.quantity;
+        return total;
+      }, 0),
       ...cart,
     };
   }
 );
 
-export const { updateCart, updateCartId, updateCartItems } = slice.actions;
+export const { updateCartState, updateCartId, updateCartItems } = slice.actions;
 
 export default slice.reducer;

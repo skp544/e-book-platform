@@ -2,6 +2,20 @@ export const emailRegex = new RegExp(
   "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
 );
 
+// interface ErrorResponse {
+//   response?: {
+//     status: number;
+//     data: Record<string, any>;
+//   };
+//   message?: string;
+// }
+
+// interface ErrorResult {
+//   message: string;
+//   success: boolean;
+//   data?: any;
+// }
+
 export const catchError = (error) => {
   const { response } = error;
 
@@ -64,7 +78,15 @@ export const calculateDiscount = (price: {
   return Math.round(((mrp - sale) / mrp) * 100);
 };
 
-export const formatPrice = (amount: number) => {
+export const formatPrice = (amount: number | string) => {
+  if (typeof amount === "string") {
+    const amountNumber = Number(amount);
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amountNumber);
+  }
+
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",

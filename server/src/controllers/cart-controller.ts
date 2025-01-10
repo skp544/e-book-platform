@@ -89,6 +89,7 @@ export const getCart: RequestHandler = async (req: Request, res: Response) => {
         quantity: item.quantity,
       })),
     },
+    success: true,
   });
 };
 
