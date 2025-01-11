@@ -21,6 +21,7 @@ export const getOrders: RequestHandler = async (
   }>("orderItems.id");
 
   res.json({
+    success: true,
     data: orders.map((item) => {
       return {
         id: item._id,

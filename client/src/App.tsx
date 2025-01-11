@@ -17,6 +17,7 @@ import NotFound from "./pages/NotFound.tsx";
 import SingleBook from "./pages/SingleBook.tsx";
 import Cart from "./pages/Cart.tsx";
 import PaymentSuccess from "./pages/PaymentSuccess.tsx";
+import Orders from "./pages/Orders.tsx";
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
         <Route element={<Private />}>
           <Route path={"/new-user"} element={<NewUser />} />
           <Route path={"/cart"} element={<Cart />} />
+          <Route path={"/orders"} element={<Orders />} />
           <Route path={"/payment-success"} element={<PaymentSuccess />} />
           <Route path={"/update-profile"} element={<UpdateProfile />} />
           <Route path={"/profile"} element={<Profile />} />

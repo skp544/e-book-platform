@@ -187,15 +187,25 @@ export interface CartApiResponse {
 
 export interface OrderItem {
   id: string;
-  cover?: string;
-  price: string;
-  qty: number;
-  slug: string;
   title: string;
+  slug: string;
+  cover?: string;
+  qty: number;
+  price: string;
   totalPrice: string;
 }
 
 export interface Order {
   orders: OrderItem[];
   totalAmount: string;
+}
+
+export interface IOrders {
+  id: string;
+  stripeCustomerId?: string;
+  paymentId?: string;
+  totalAmount: string;
+  paymentStatus?: string;
+  date: string;
+  orderItem: OrderItem[];
 }

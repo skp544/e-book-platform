@@ -10,3 +10,13 @@ export const orderSuccessApi = async (formData: { sessionId: string }) => {
     return catchError(e);
   }
 };
+
+export const getOrdersApi = async () => {
+  try {
+    const { data } = await client("/order");
+
+    return data;
+  } catch (e) {
+    return catchError(e);
+  }
+};
