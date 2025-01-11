@@ -184,3 +184,18 @@ export interface CartApiResponse {
     items: CartItemAPI[];
   };
 }
+
+export interface OrderItem {
+  id: string;
+  cover?: string;
+  price: string;
+  qty: number;
+  slug: string;
+  title: string;
+  totalPrice: string;
+}
+
+export interface Order {
+  orders: OrderItem[];
+  totalAmount: string;
+}
