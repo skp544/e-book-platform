@@ -84,7 +84,7 @@ export const checkout: RequestHandler = async (req: Request, res: Response) => {
   const session = await generateStripeCheckoutSession({ customer, line_items });
 
   if (session.url) {
-    res.json({ checkoutUrl: session.url });
+    res.json({ success: true, checkoutUrl: session.url });
   } else {
     return sendErrorResponse({
       res,
@@ -161,7 +161,7 @@ export const instantCheckout: RequestHandler = async (
   const session = await generateStripeCheckoutSession({ customer, line_items });
 
   if (session.url) {
-    res.json({ checkoutUrl: session.url });
+    res.json({ success: true, checkoutUrl: session.url });
   } else {
     return sendErrorResponse({
       res,

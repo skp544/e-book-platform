@@ -114,6 +114,7 @@ const CartProvider = ({ children }: Props) => {
   return (
     <CartContext.Provider
       value={{
+        id: cart.id,
         items: cart.items,
         totalCount: cart.totalCounts,
         updateCart,

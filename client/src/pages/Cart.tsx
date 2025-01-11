@@ -4,8 +4,12 @@ import { Button, Chip, Divider } from "@nextui-org/react";
 import { calculateDiscount, formatPrice } from "../helper";
 import { FaMinus, FaPlus, FaRegTrashCan } from "react-icons/fa6";
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
+import { checkoutApi } from "../apis/checkout";
+import toast from "react-hot-toast";
+import { useState } from "react";
 
 const Cart = () => {
+  const [busy, setBusy] = useState(false);
   const {
     items,
     pending,
@@ -15,7 +19,24 @@ const Cart = () => {
     subTotal,
     totalPrice,
     clearCart,
+    id,
   } = useCart();
+
+  const handleCheckout = async () => {
+    if (!id) return;
+
+    setBusy(true);
+    const response = await checkoutApi({ cartId: id! });
+    setBusy(false);
+
+    if (!response.success) {
+      return toast.error(response.message);
+    }
+
+    if (response.checkoutUrl) {
+      window.location.href = response.checkoutUrl;
+    }
+  };
 
   if (fetching) {
     return <Skeletons.Cart />;
@@ -78,7 +99,7 @@ const Cart = () => {
                     onPress={() => updateCart({ product, quantity: -1 })}
                     variant="solid"
                     size="sm"
-                    isLoading={pending}
+                    isLoading={pending || busy}
                   >
                     <FaMinus />
                   </Button>
@@ -90,7 +111,7 @@ const Cart = () => {
                     isIconOnly
                     variant="solid"
                     size="sm"
-                    isLoading={pending}
+                    isLoading={pending || busy}
                   >
                     <FaPlus />
                   </Button>
@@ -99,7 +120,7 @@ const Cart = () => {
                     onPress={() => updateCart({ product, quantity: -quantity })}
                     variant="solid"
                     size="sm"
-                    isLoading={pending}
+                    isLoading={pending || busy}
                   >
                     <FaRegTrashCan />
                   </Button>
@@ -124,8 +145,10 @@ const Cart = () => {
             color="danger"
             radius="sm"
             size="lg"
-            isLoading={pending}
+            isLoading={pending || busy}
+            type="button"
             startContent={<MdOutlineShoppingCartCheckout size={18} />}
+            onPress={handleCheckout}
           >
             Checkout
           </Button>

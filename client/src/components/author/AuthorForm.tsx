@@ -3,9 +3,9 @@ import RichEditor from "../rich-editor";
 import { useEffect, useState } from "react";
 import { Button, Input } from "@nextui-org/react";
 import { MdClose, MdOutlineAdd } from "react-icons/md";
-import { newAuthorSchema } from "../../schemas/index.ts";
+import { newAuthorSchema } from "../../schemas";
 import ErrorList from "../common/ErrorList.tsx";
-import { AuthorInfo, AuthorInitialState } from "../../types/index.ts";
+import { AuthorInfo, AuthorInitialState } from "../../types";
 
 interface Props {
   btnTitle?: string;
@@ -86,7 +86,7 @@ const AuthorForm = ({ btnTitle, onSubmit, initialState }: Props) => {
         onChange={setAbout}
         editable
         placeholder={"Say who you are to the leaders..."}
-        isInvalid={errors?.about ? true : false}
+        isInvalid={!!errors?.about}
         errorMessage={<ErrorList errors={errors?.about} />}
       />
 

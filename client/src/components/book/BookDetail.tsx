@@ -12,6 +12,9 @@ import {
 import { TbShoppingCartPlus } from "react-icons/tb";
 import RichEditor from "../rich-editor";
 import useCart from "../../hooks/useCart";
+import { instantCheckoutApi } from "../../apis/checkout.ts";
+import toast from "react-hot-toast";
+import { useState } from "react";
 
 interface Props {
   book?: IBookPublicDetails;
@@ -19,16 +22,11 @@ interface Props {
 
 const BookDetail = ({ book }: Props) => {
   const { updateCart, pending } = useCart();
+  const [busy, setBusy] = useState(false);
 
   if (!book) {
     return null;
   }
-
-  const alreadyPurchased = false;
-
-  const handleCartUpdate = () => {
-    updateCart({ product: book, quantity: 1 });
-  };
 
   const {
     id,
@@ -45,6 +43,26 @@ const BookDetail = ({ book }: Props) => {
     publishedAt,
     slug,
   } = book;
+
+  const alreadyPurchased = false;
+
+  const handleCartUpdate = () => {
+    updateCart({ product: book, quantity: 1 });
+  };
+
+  const handleBuyNow = async () => {
+    setBusy(true);
+    const response = await instantCheckoutApi({ productId: id });
+    setBusy(false);
+
+    if (!response.success) {
+      return toast.error(response.message);
+    }
+
+    if (response.checkoutUrl) {
+      window.location.href = response.checkoutUrl;
+    }
+  };
 
   return (
     <div className="md:flex">
@@ -145,13 +163,18 @@ const BookDetail = ({ book }: Props) => {
               <Button
                 variant="light"
                 type="button"
-                isLoading={pending}
+                isLoading={pending || busy}
                 onPress={handleCartUpdate}
                 startContent={<TbShoppingCartPlus />}
               >
                 Add to Cart
               </Button>
-              <Button isLoading={pending} type="button" variant="flat">
+              <Button
+                onPress={handleBuyNow}
+                isLoading={pending || busy}
+                type="button"
+                variant="flat"
+              >
                 Buy now
               </Button>
             </>
