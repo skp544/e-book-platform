@@ -120,10 +120,13 @@ export const getOrderSuccessStatus: RequestHandler = async (req, res) => {
     );
 
     res.json({
-      orders: data,
-      totalAmount: order.totalAmount
-        ? (order.totalAmount / 100).toFixed(2)
-        : "0",
+      data: {
+        orders: data,
+        totalAmount: order.totalAmount
+          ? (order.totalAmount / 100).toFixed(2)
+          : "0",
+      },
+      success: true,
     });
     return;
   }
