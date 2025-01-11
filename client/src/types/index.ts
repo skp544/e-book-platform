@@ -153,6 +153,7 @@ export interface ICartContext {
   subTotal: number;
   totalPrice: number;
   fetching: boolean;
+  clearCart(): void;
 }
 
 export type UpdateItem = {

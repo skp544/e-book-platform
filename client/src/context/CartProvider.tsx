@@ -8,7 +8,7 @@ import {
   updateCartState,
 } from "../store/cartSlice";
 import useAuth from "../hooks/useAuth";
-import { getCartApi, updateCartApi } from "../apis/cart";
+import { clearCartApi, getCartApi, updateCartApi } from "../apis/cart";
 import toast from "react-hot-toast";
 
 interface Props {
@@ -23,7 +23,16 @@ export const CartContext = createContext<ICartContext>({
   fetching: true,
   subTotal: 0,
   totalPrice: 0,
+  clearCart() {},
 });
+
+const CART_KEY = "cartItems";
+
+const updateCartInLS = (items: CartItem[]) => {
+  localStorage.setItem(CART_KEY, JSON.stringify(items));
+};
+
+let startLSUpdate = false;
 
 const CartProvider = ({ children }: Props) => {
   const cart = useSelector(getCartState);
@@ -33,7 +42,22 @@ const CartProvider = ({ children }: Props) => {
   const [pending, setPending] = useState(false);
   const [fetching, setFetching] = useState(true);
 
+  const clearCart = async () => {
+    dispatch(updateCartState({ items: [], id: "" }));
+
+    if (profile) {
+      setPending(true);
+      const response = await clearCartApi();
+      setPending(false);
+      if (!response.success) {
+        return toast.error(response.message);
+      }
+      toast.success(response.message);
+    }
+  };
+
   const updateCart = async (item: CartItem) => {
+    startLSUpdate = true;
     dispatch(updateCartItems(item));
 
     const formData = {
@@ -58,6 +82,14 @@ const CartProvider = ({ children }: Props) => {
   };
 
   const fetchCartInfo = async () => {
+    if (!profile) {
+      const items = localStorage.getItem(CART_KEY);
+      if (items) {
+        dispatch(updateCartState({ items: JSON.parse(items) }));
+      }
+      return setFetching(false);
+    }
+
     const response = await getCartApi();
     setFetching(false);
     if (!response?.success) {
@@ -68,6 +100,12 @@ const CartProvider = ({ children }: Props) => {
       updateCartState({ id: response.data.id, items: response.data.items })
     );
   };
+
+  useEffect(() => {
+    if (startLSUpdate && !profile) {
+      updateCartInLS(cart.items);
+    }
+  }, [cart.items, profile]);
 
   useEffect(() => {
     fetchCartInfo();
@@ -83,6 +121,7 @@ const CartProvider = ({ children }: Props) => {
         fetching,
         subTotal: cart.subTotal,
         totalPrice: cart.totalPrice,
+        clearCart,
       }}
     >
       {children}

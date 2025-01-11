@@ -19,3 +19,12 @@ export const getCartApi = async () => {
     catchError(error);
   }
 };
+
+export const clearCartApi = async () => {
+  try {
+    const { data } = await client("/cart/clear");
+    return data;
+  } catch (error) {
+    catchError(error);
+  }
+};
