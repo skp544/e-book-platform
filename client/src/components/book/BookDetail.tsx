@@ -15,6 +15,7 @@ import useCart from "../../hooks/useCart";
 import { instantCheckoutApi } from "../../apis/checkout.ts";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import useAuth from "../../hooks/useAuth.ts";
 
 interface Props {
   book?: IBookPublicDetails;
@@ -22,6 +23,7 @@ interface Props {
 
 const BookDetail = ({ book }: Props) => {
   const { updateCart, pending } = useCart();
+  const { profile } = useAuth();
   const [busy, setBusy] = useState(false);
 
   if (!book) {
@@ -44,7 +46,7 @@ const BookDetail = ({ book }: Props) => {
     slug,
   } = book;
 
-  const alreadyPurchased = false;
+  const alreadyPurchased = profile?.books?.includes(id) || false;
 
   const handleCartUpdate = () => {
     updateCart({ product: book, quantity: 1 });
