@@ -285,11 +285,12 @@ export const getAllPurchasedBooks: RequestHandler = async (
   });
 
   if (!user) {
-    res.json({ data: [] });
+    res.json({ data: [], success: true });
     return;
   }
 
   res.json({
+    success: true,
     data: user?.books.map((book: PopulatedBooks) => ({
       id: book._id,
       title: book.title,

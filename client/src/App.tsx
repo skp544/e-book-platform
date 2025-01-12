@@ -20,6 +20,7 @@ import PaymentSuccess from "./pages/PaymentSuccess.tsx";
 import Orders from "./pages/Orders.tsx";
 import ReviewForm from "./pages/ReviewForm.tsx";
 import AuthorPage from "./pages/AuthorPage.tsx";
+import Library from "./pages/Library.tsx";
 
 const App = () => {
   return (
@@ -38,6 +39,7 @@ const App = () => {
           <Route path={"/payment-success"} element={<PaymentSuccess />} />
           <Route path={"/update-profile"} element={<UpdateProfile />} />
           <Route path={"/profile"} element={<Profile />} />
+          <Route path={"/library"} element={<Library />} />
           <Route path={"/rate/:bookId"} element={<ReviewForm />} />
           <Route
             path={"/author-registration"}

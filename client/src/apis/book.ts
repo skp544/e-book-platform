@@ -70,3 +70,13 @@ export const recommendedBooksApi = async (id: string) => {
     return catchError(e);
   }
 };
+
+export const getAllPurchasedBooksApi = async () => {
+  try {
+    const { data } = await client("/book/list");
+
+    return data;
+  } catch (e) {
+    return catchError(e);
+  }
+};

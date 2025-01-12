@@ -233,3 +233,15 @@ export interface Review {
     };
   };
 }
+
+export interface ILibraryBook {
+  id: string;
+  title: string;
+  cover?: string;
+  slug: string;
+  author: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+}
