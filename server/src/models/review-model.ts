@@ -1,34 +1,37 @@
-import {Model, model, ObjectId, Schema} from 'mongoose';
+import { Model, model, ObjectId, Schema } from "mongoose";
 
-interface  ReviewDoc {
-    user: ObjectId,
-    book: ObjectId,
-    rating: number,
-    content?:string;
-    createdAt: Date;
+interface ReviewDoc {
+  user: ObjectId;
+  book: ObjectId;
+  rating: number;
+  content?: string;
+  createdAt: Date;
 }
 
-const reviewSchema = new Schema<ReviewDoc>({
+const reviewSchema = new Schema<ReviewDoc>(
+  {
     user: {
-        type: Schema.ObjectId,
-        ref: "User",
-        required: true,
+      type: Schema.ObjectId,
+      ref: "User",
+      required: true,
     },
     book: {
-        type: Schema.ObjectId,
-        ref: "Book",
-        required: true,
+      type: Schema.ObjectId,
+      ref: "Book",
+      required: true,
     },
     rating: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     content: {
-        type: String,
-        trim: true
-    }
-}, {timestamps: true})
+      type: String,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
 
-const Review = model('Review', reviewSchema);
+const Review = model("Review", reviewSchema);
 
 export default Review as Model<ReviewDoc>;

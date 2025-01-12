@@ -1,8 +1,8 @@
 import { Response, Request, RequestHandler } from "express";
-import {AddReviewRequestHandler, PopulatedUser} from "@/types";
+import { AddReviewRequestHandler, PopulatedUser } from "@/types";
 import Review from "@/models/review-model";
 import { sendErrorResponse } from "@/utils/helper";
-import {isValidObjectId, ObjectId, Types} from "mongoose";
+import { isValidObjectId, Types } from "mongoose";
 import Book from "@/models/book-model";
 
 export const addReview: AddReviewRequestHandler = async (
@@ -36,7 +36,8 @@ export const addReview: AddReviewRequestHandler = async (
   });
 
   res.json({
-    message: "Review updated.",
+    success: true,
+    message: "Thanks for leaving a review.",
   });
 };
 
@@ -59,35 +60,43 @@ export const getReview: RequestHandler = async (
   });
 
   if (!review) {
-    return sendErrorResponse({
-      res,
-      status: 404,
-      message: "Review not found!+",
+    res.status(200).json({
+      success: true,
+      message: "",
     });
+    return;
   }
 
   res.json({
-    content: review.content,
-    rating: review.rating,
+    success: true,
+    data: {
+      content: review.content,
+      rating: review.rating,
+    },
   });
 };
 
-export  const getPublicReviews: RequestHandler = async  (req: Request, res: Response) => {
+export const getPublicReviews: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const reviews = await Review.find({ book: req.params.bookId }).populate<{
+    user: PopulatedUser;
+  }>({ path: "user", select: "name avatar " });
 
-  const reviews = await Review.find({book: req.params.bookId}).populate<{user: PopulatedUser}>({path: "user", select: "name avatar "})
-
-  res.json({data: reviews.map(r => {
-    return {
-      id: r._id,
-      content: r.content,
-      date: r.createdAt.toISOString().split("T")[0],
-      rating: r.rating,
-      user: {
-        id: r.user._id,
-        name: r.user.name,
-      avatar : r.user.avatar
-      }
-
-    }
-    })})
-}
+  res.json({
+    data: reviews.map((r) => {
+      return {
+        id: r._id,
+        content: r.content,
+        date: r.createdAt.toISOString().split("T")[0],
+        rating: r.rating,
+        user: {
+          id: r.user._id,
+          name: r.user.name,
+          avatar: r.user.avatar,
+        },
+      };
+    }),
+  });
+};

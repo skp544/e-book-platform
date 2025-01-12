@@ -209,3 +209,23 @@ export interface IOrders {
   date: string;
   orderItem: OrderItem[];
 }
+
+export interface IAddReviewFormData {
+  bookId: string;
+  content: string;
+  rating: number;
+}
+
+export interface Review {
+  content: string;
+  date: string;
+  id: string;
+  rating: number;
+  user: {
+    id: string;
+    name: string;
+    avatar?: {
+      url: string;
+    };
+  };
+}

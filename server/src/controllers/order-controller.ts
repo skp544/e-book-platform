@@ -11,14 +11,16 @@ export const getOrders: RequestHandler = async (
   req: Request,
   res: Response
 ) => {
-  const orders = await Order.find({ userId: req.user.id }).populate<{
-    orderItems: {
-      id: BookDoc;
-      price: number;
-      qty: number;
-      totalPrice: number;
-    }[];
-  }>("orderItems.id");
+  const orders = await Order.find({ userId: req.user.id })
+    .populate<{
+      orderItems: {
+        id: BookDoc;
+        price: number;
+        qty: number;
+        totalPrice: number;
+      }[];
+    }>("orderItems.id")
+    .sort("-createdAt");
 
   res.json({
     success: true,
