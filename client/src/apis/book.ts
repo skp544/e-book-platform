@@ -80,3 +80,13 @@ export const getAllPurchasedBooksApi = async () => {
     return catchError(e);
   }
 };
+
+export const getBookAccessUrlApi = async (slug: string) => {
+  try {
+    const { data } = await client(`/book/read/${slug}`);
+
+    return data;
+  } catch (e) {
+    return catchError(e);
+  }
+};

@@ -8,7 +8,14 @@ export default {
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundColor: {
+        "book-dark": "#2b2b2b",
+      },
+      color: {
+        "book-dark": "f8f8ea",
+      },
+    },
   },
   plugins: [nextui()],
 };

@@ -441,6 +441,7 @@ export const generateBookAccessUrl: RequestHandler = async (
   // FOR LOCAL
 
   res.json({
+    success: true,
     data: { settings, url: `${process.env.BOOK_API_URL}/${book.fileInfo.id}` },
   });
 };
