@@ -1,4 +1,4 @@
-import BookByGenre from "../components/BookByGenre";
+import BookByGenre from "../components/book/BookByGenre.tsx";
 import HeroSection from "../components/HeroSection";
 
 const Home = () => {

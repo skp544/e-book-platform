@@ -511,7 +511,7 @@ export const getRecommendedBooks: RequestHandler = async (
     rating: book.averageRatings?.toFixed(1),
   }));
 
-  res.json({ data: result });
+  res.json({ success: true, data: result });
 };
 
 export const getAllBooks: RequestHandler = async (req, res) => {

@@ -1,8 +1,9 @@
-import DividerWithTitle from "./common/DividerWithTitle.tsx";
-import { Review } from "../types";
+import DividerWithTitle from "../common/DividerWithTitle.tsx";
+import { Review } from "../../types";
 import { User } from "@nextui-org/react";
 import { FaStar } from "react-icons/fa6";
-import RichEditor from "./rich-editor";
+import RichEditor from "../rich-editor";
+import { Link } from "react-router-dom";
 
 interface Props {
   title?: string;
@@ -11,6 +12,22 @@ interface Props {
 }
 
 const ReviewSection = ({ title, id, reviews }: Props) => {
+  if (!reviews.length) {
+    return (
+      <div className={"pb-20"}>
+        <DividerWithTitle title={title} />
+        <div>
+          <p className={"text-xl"}>
+            Be the first to{" "}
+            <Link to={`/rate/${id}`} className={"font-semibold underline"}>
+              add a review
+            </Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={"pb-20"}>
       <DividerWithTitle title={title} />

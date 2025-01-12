@@ -5,8 +5,9 @@ import { IBookPublicDetails, Review } from "../types";
 import toast from "react-hot-toast";
 import BookDetail from "../components/book/BookDetail";
 import Skeletons from "../components/skeletons";
-import ReviewSection from "../components/ReviewSection.tsx";
+import ReviewSection from "../components/book/ReviewSection.tsx";
 import { getPublicReviewApi } from "../apis/review.ts";
+import RecommendedSection from "../components/book/RecommendedSection.tsx";
 
 const fetchBookReviews = async (id: string) => {
   const response = await getPublicReviewApi(id);
@@ -40,11 +41,16 @@ const SingleBook = () => {
   }
 
   return (
-    <div className="p-5 lg:p-0 space-y-6 ">
+    <div className="p-5 lg:p-0 space-y-20 ">
       <BookDetail book={bookDetails} />
+
+      {/* Recommemded Section */}
+
+      <RecommendedSection id={bookDetails?.id} />
 
       {/*  Review Section */}
       <ReviewSection
+        id={bookDetails?.id}
         title={`${bookDetails?.title} Reviews`}
         reviews={reviews}
       />

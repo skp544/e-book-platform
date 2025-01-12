@@ -60,3 +60,13 @@ export const booksByPublicDetailApi = async (slug: string) => {
     return catchError(e);
   }
 };
+
+export const recommendedBooksApi = async (id: string) => {
+  try {
+    const { data } = await client(`/book/recommended/${id}`);
+
+    return data;
+  } catch (e) {
+    return catchError(e);
+  }
+};
