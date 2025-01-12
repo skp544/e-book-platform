@@ -81,7 +81,7 @@ const BookDetail = ({ book }: Props) => {
         <div>
           <Link
             className="font-semibold hover:underline"
-            to={`author/${author.id}`}
+            to={`/author/${author.id}`}
           >
             {author.name}
           </Link>

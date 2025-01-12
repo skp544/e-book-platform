@@ -19,6 +19,7 @@ import Cart from "./pages/Cart.tsx";
 import PaymentSuccess from "./pages/PaymentSuccess.tsx";
 import Orders from "./pages/Orders.tsx";
 import ReviewForm from "./pages/ReviewForm.tsx";
+import AuthorPage from "./pages/AuthorPage.tsx";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
         <Route path={"/verify"} element={<Verify />} />
         <Route path={"/not-found"} element={<NotFound />} />
         <Route path={"/book/:slug"} element={<SingleBook />} />
+        <Route path={"/author/:id"} element={<AuthorPage />} />
 
         <Route element={<Private />}>
           <Route path={"/new-user"} element={<NewUser />} />

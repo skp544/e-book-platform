@@ -81,6 +81,10 @@ export interface AuthorInfo {
   socialLinks?: string[];
 }
 
+export interface IAuthorInfo extends AuthorInfo {
+  books: IBookByGenre[];
+}
+
 export interface AuthorInitialState extends AuthorInfo {
   id: string;
 }
