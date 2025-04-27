@@ -1,9 +1,10 @@
-import DividerWithTitle from "../common/DividerWithTitle.tsx";
+import { FC } from "react";
 import { Review } from "../../types";
-import { User } from "@nextui-org/react";
-import { FaStar } from "react-icons/fa6";
-import RichEditor from "../rich-editor";
+import DividerWithTitle from "../common/DividerWithTitle.tsx";
 import { Link } from "react-router-dom";
+import { User } from "@heroui/react";
+import RichEditor from "../rich-editor";
+import { FaStar } from "react-icons/fa";
 
 interface Props {
   title?: string;
@@ -11,7 +12,7 @@ interface Props {
   reviews: Review[];
 }
 
-const ReviewSection = ({ title, id, reviews }: Props) => {
+const ReviewSection: FC<Props> = ({ title, id, reviews }) => {
   if (!reviews.length) {
     return (
       <div className={"pb-20"}>
@@ -55,5 +56,4 @@ const ReviewSection = ({ title, id, reviews }: Props) => {
     </div>
   );
 };
-
 export default ReviewSection;

@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { booksByPublicDetailApi } from "../apis/book";
+import { useEffect, useState } from "react";
 import { IBookPublicDetails, Review } from "../types";
-import toast from "react-hot-toast";
-import BookDetail from "../components/book/BookDetail";
-import Skeletons from "../components/skeletons";
-import ReviewSection from "../components/book/ReviewSection.tsx";
+import { booksByPublicDetailApi } from "../apis/book.ts";
+import { addToast } from "@heroui/react";
 import { getPublicReviewApi } from "../apis/review.ts";
+import Skeletons from "../components/skeletons";
+import BookDetail from "../components/book/BookDetail.tsx";
 import RecommendedSection from "../components/book/RecommendedSection.tsx";
+import ReviewSection from "../components/review/ReviewSection.tsx";
 
 const fetchBookReviews = async (id: string) => {
   const response = await getPublicReviewApi(id);
@@ -25,7 +25,11 @@ const SingleBook = () => {
     const response = await booksByPublicDetailApi(slug!);
     setBusy(false);
     if (!response.success) {
-      return toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
     const reviewData = await fetchBookReviews(response?.data.id);
     setBookDetails(response?.data);
@@ -41,10 +45,8 @@ const SingleBook = () => {
   }
 
   return (
-    <div className="p-5 lg:p-0 space-y-20 ">
+    <div className="space-y-20 p-5 lg:p-0">
       <BookDetail book={bookDetails} />
-
-      {/* Recommemded Section */}
 
       <RecommendedSection id={bookDetails?.id} />
 
@@ -57,5 +59,4 @@ const SingleBook = () => {
     </div>
   );
 };
-
 export default SingleBook;

@@ -1,6 +1,6 @@
 import useAuth from "../../hooks/useAuth.ts";
-import { Navigate, Outlet } from "react-router-dom";
 import LoadingSpinner from "../common/LoadingSpinner.tsx";
+import { Navigate, Outlet } from "react-router-dom";
 
 const Private = () => {
   const { status } = useAuth();
@@ -14,5 +14,4 @@ const Private = () => {
 
   return notLoggedIn ? <Navigate to={"/sign-up"} /> : <Outlet />;
 };
-
 export default Private;

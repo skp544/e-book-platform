@@ -1,18 +1,17 @@
 import mongoose from "mongoose";
 
-const URI = process.env.MONGODB_URI || "mongodb://localhost:27017/e-book";
+const uri = process.env.MONGODB_URI;
 
-if (!URI) {
-  throw new Error("Please provide a MongoDB URI");
+if (!uri) {
+  throw new Error("Please define the MONGODB_URI environment variable");
 }
-
-export const connectDB = async () => {
-  await mongoose
-    .connect(URI)
+export const dbConnect = () => {
+  mongoose
+    .connect(uri)
     .then(() => {
-      console.log("MongoDB connected successfully");
+      console.log("MongoDB connected");
     })
-    .catch((err) => {
-      console.error("Failed to connect to MongoDB", err);
+    .catch((error) => {
+      console.error("MongoDB connection error:", error);
     });
 };

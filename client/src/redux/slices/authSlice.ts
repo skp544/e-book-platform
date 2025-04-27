@@ -1,6 +1,5 @@
-import {createSelector, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {AuthState, Profile, RootState} from "../types";
-
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AuthState, Profile, RootState } from "../../types";
 
 const initialState: AuthState = {
   status: "busy",
@@ -16,12 +15,15 @@ const slice = createSlice({
     },
     updateAuthStatus(state, { payload }: PayloadAction<AuthState["status"]>) {
       state.status = payload;
-    }
+    },
   },
 });
 
 export const { updateProfile, updateAuthStatus } = slice.actions;
 
-export  const getAuthState = createSelector((state:RootState) => state, (state) => state.auth);
+export const getAuthState = createSelector(
+  (state: RootState) => state,
+  (state) => state.auth,
+);
 
 export default slice.reducer;

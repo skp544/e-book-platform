@@ -1,5 +1,6 @@
-import { catchError } from "../helper";
 import client from "./client.ts";
+import { catchError } from "../helpers";
+import { IBookAccessUrlAPI } from "../types";
 
 export const createNewBookApi = async (formData: FormData) => {
   try {
@@ -23,7 +24,7 @@ export const bookDetailsApi = async (slug: string) => {
 
 export const updateBookApi = async (formData: FormData) => {
   try {
-    const { data } = await client.patch("/book", formData);
+    const { data } = await client.patch("/book/update", formData);
 
     return data;
   } catch (e) {

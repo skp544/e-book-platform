@@ -1,13 +1,18 @@
 import useAuth from "../hooks/useAuth.ts";
-import { Avatar, Button } from "@nextui-org/react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Avatar, Button, Spinner } from "@heroui/react";
 import { BsPencilSquare } from "react-icons/bs";
 
 const Profile = () => {
-  const { profile } = useAuth();
+  const { profile, status } = useAuth();
+
   const navigate = useNavigate();
 
-  if (!profile) {
+  if (status === "busy") {
+    return <Spinner size="sm" />;
+  }
+
+  if (!profile || status === "unauthenticated") {
     return <Navigate to={"/sign-up"} />;
   }
 
@@ -16,21 +21,22 @@ const Profile = () => {
   const isAuthor = role === "author";
 
   return (
-    <div className={"flex flex-1 flex-col items-center "}>
+    <div className={"mt-20 flex flex-1 flex-col items-center"}>
       <div className={"flex min-w-96"}>
         <Avatar
-          className={"w-20 h-20"}
+          className={"h-20 w-20"}
           radius={"sm"}
           name={profile?.name}
           src={profile?.avatar}
         />
-        <div className={"pl-4  flex-1"}>
+
+        <div className={"flex-1 pl-4"}>
           <p className={"text-xl font-semibold"}> {profile?.name}</p>
           <p>{profile?.email}</p>
-          <div className={"flex justify-between items-center"}>
+          <div className={"flex items-center justify-between"}>
             <p>
               Role:{" "}
-              <span className={"uppercase italic text-sm"}>
+              <span className={"text-sm uppercase italic"}>
                 {profile?.role}
               </span>
             </p>
@@ -45,6 +51,7 @@ const Profile = () => {
             )}
           </div>
         </div>
+
         <Button
           className={"ml-auto"}
           onPress={() => navigate("/update-profile")}
@@ -57,5 +64,4 @@ const Profile = () => {
     </div>
   );
 };
-
 export default Profile;

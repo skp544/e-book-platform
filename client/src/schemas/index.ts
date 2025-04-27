@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { genreList, languageList } from "../helper/data.ts";
+import { genreList, languageList } from "../helpers/data.ts";
 
 export const commonBookSchema = {
   title: z.string().trim().min(5, "Title is too short!"),

@@ -1,5 +1,5 @@
-import { catchError } from "../helper";
-import client from "./client";
+import client from "./client.ts";
+import { catchError } from "../helpers";
 
 export const checkoutApi = async (formData: { cartId: string }) => {
   try {

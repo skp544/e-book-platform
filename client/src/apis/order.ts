@@ -1,5 +1,5 @@
-import { catchError } from "../helper";
 import client from "./client.ts";
+import { catchError } from "../helpers";
 
 export const orderSuccessApi = async (formData: { sessionId: string }) => {
   try {

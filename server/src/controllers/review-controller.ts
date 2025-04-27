@@ -1,102 +1,114 @@
-import { Response, Request, RequestHandler } from "express";
+import { handleError, sendErrorResponse } from "@/utils/helper";
 import { AddReviewRequestHandler, PopulatedUser } from "@/types";
-import Review from "@/models/review-model";
-import { sendErrorResponse } from "@/utils/helper";
+import ReviewModel from "@/models/review-model";
+import { RequestHandler } from "express";
 import { isValidObjectId, Types } from "mongoose";
-import Book from "@/models/book-model";
+import BookModel from "@/models/book-model";
 
-export const addReview: AddReviewRequestHandler = async (
-  req: Request,
-  res: Response
-) => {
-  const { bookId, rating, content } = req.body;
+export const addReview: AddReviewRequestHandler = async (req, res) => {
+  try {
+    const { rating, content, bookId } = req.body;
 
-  await Review.findOneAndUpdate(
-    { book: bookId, user: req.user.id },
-    { content, rating },
-    { upsert: true }
-  );
-
-  const [result] = await Review.aggregate<{ averageRating: number }>([
-    {
-      $match: {
-        book: new Types.ObjectId(bookId),
+    await ReviewModel.findOneAndUpdate(
+      { book: bookId, user: req.user.id },
+      {
+        content,
+        rating,
       },
-    },
-    {
-      $group: {
-        _id: null,
-        averageRating: { $avg: "$rating" },
+      { upsert: true, new: true }
+    );
+
+    const [result] = await ReviewModel.aggregate<{ averageRating: number }>([
+      {
+        $match: {
+          book: new Types.ObjectId(bookId),
+        },
       },
-    },
-  ]);
+      {
+        $group: {
+          _id: null,
+          averageRating: { $avg: "$rating" },
+        },
+      },
+    ]);
 
-  await Book.findByIdAndUpdate(bookId, {
-    averageRating: result.averageRating,
-  });
-
-  res.json({
-    success: true,
-    message: "Thanks for leaving a review.",
-  });
-};
-
-export const getReview: RequestHandler = async (
-  req: Request,
-  res: Response
-) => {
-  const { bookId } = req.params;
-
-  if (!isValidObjectId(bookId))
-    return sendErrorResponse({
-      res,
-      message: "Book id is not valid!",
-      status: 422,
+    await BookModel.findByIdAndUpdate(bookId, {
+      averageRating: result.averageRating,
     });
 
-  const review = await Review.findOne({
-    book: bookId,
-    user: req.user.id,
-  });
+    res.status(201).json({
+      success: true,
+      message: "Thanks for leaving a review!",
+    });
+  } catch (e) {
+    handleError(e, res);
+  }
+};
 
-  if (!review) {
+export const getReview: RequestHandler = async (req, res) => {
+  try {
+    const { bookId } = req.params;
+
+    if (!isValidObjectId(bookId)) {
+      return sendErrorResponse({
+        status: 400,
+        message: "Invalid book id!",
+        res,
+      });
+    }
+
+    const review = await ReviewModel.findOne({
+      book: bookId,
+      user: req.user.id,
+    });
+
+    if (!review) {
+      return res.status(200).json({
+        success: true,
+        message: "Review not found!",
+        data: {
+          content: "",
+          rating: "",
+        },
+      });
+    }
+
     res.status(200).json({
       success: true,
-      message: "",
+      data: {
+        content: review.content,
+        rating: review.rating,
+      },
     });
-    return;
+  } catch (e) {
+    handleError(e, res);
   }
-
-  res.json({
-    success: true,
-    data: {
-      content: review.content,
-      rating: review.rating,
-    },
-  });
 };
 
-export const getPublicReviews: RequestHandler = async (
-  req: Request,
-  res: Response
-) => {
-  const reviews = await Review.find({ book: req.params.bookId }).populate<{
-    user: PopulatedUser;
-  }>({ path: "user", select: "name avatar " });
+export const getPublicReviews: RequestHandler = async (req, res) => {
+  try {
+    const reviews = await ReviewModel.find({
+      book: req.params.bookId,
+    }).populate<{
+      user: PopulatedUser;
+    }>({ path: "user", select: "name avatar " });
 
-  res.json({
-    data: reviews.map((r) => {
-      return {
-        id: r._id,
-        content: r.content,
-        date: r.createdAt.toISOString().split("T")[0],
-        rating: r.rating,
-        user: {
-          id: r.user._id,
-          name: r.user.name,
-          avatar: r.user.avatar,
-        },
-      };
-    }),
-  });
+    res.json({
+      data: reviews.map((r) => {
+        return {
+          id: r._id,
+          content: r.content,
+          date: r.createdAt.toISOString().split("T")[0],
+          rating: r.rating,
+          user: {
+            id: r.user._id,
+            name: r.user.name,
+            avatar: r.user.avatar,
+          },
+        };
+      }),
+    });
+  } catch (e) {
+    handleError(e, res);
+  }
 };

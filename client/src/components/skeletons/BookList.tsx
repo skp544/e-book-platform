@@ -1,4 +1,4 @@
-import { Skeleton } from "@nextui-org/react";
+import { Skeleton } from "@heroui/react";
 import { FC } from "react";
 
 export interface Props {
@@ -9,7 +9,7 @@ const BookList: FC<Props> = ({ itemsCount = 5 }) => {
   const fakeData = new Array(itemsCount).fill("");
 
   return (
-    <div className="mt-6 grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 gap-5 animate-pulse">
+    <div className="mt-6 grid animate-pulse gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
       {fakeData.map((_, index) => {
         return (
           <div
@@ -17,9 +17,9 @@ const BookList: FC<Props> = ({ itemsCount = 5 }) => {
             key={index}
           >
             <div>
-              <Skeleton className="w-28 h-36 rounded bg-default-100" />
+              <Skeleton className="h-36 w-28 rounded bg-default-100" />
             </div>
-            <div className="w-full flex flex-col gap-2">
+            <div className="flex w-full flex-col gap-2">
               <Skeleton className="h-3 w-3/5 rounded bg-default-200" />
               <Skeleton className="h-4 w-10 rounded bg-default-200" />
               <Skeleton className="h-4 w-10 rounded bg-default-200" />

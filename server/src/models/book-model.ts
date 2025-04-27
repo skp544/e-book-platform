@@ -1,7 +1,7 @@
-import { Model, model, Schema, Types } from "mongoose";
+import { Model, model, ObjectId, Schema, Types } from "mongoose";
 
 export interface BookDoc {
-  _id?: Types.ObjectId
+  _id?: Types.ObjectId;
   author: Types.ObjectId;
   title: string;
   slug: string;
@@ -9,7 +9,6 @@ export interface BookDoc {
   language: string;
   publishedAt: Date;
   publicationName: string;
-  averageRating?: number;
   genre: string;
   price: {
     mrp: number;
@@ -23,87 +22,98 @@ export interface BookDoc {
     id: string;
     size: string;
   };
+  averageRating?: number;
 }
 
-const bookSchema = new Schema<BookDoc>({
-  author: {
-    type: Schema.Types.ObjectId,
-    ref: "Author",
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  slug: {
-    type: String,
-    required: true,
-    trim: true,
-    unique: true,
-  },
-  description: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  language: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  publicationName: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  averageRating:Number,
-  genre: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  publishedAt: {
-    type: Date,
-    required: true,
-  },
-  price: {
-    type: Object,
-    required: true,
-    mrp: {
-      type: Number,
+const bookSchema = new Schema<BookDoc>(
+  {
+    author: {
+      type: Schema.Types.ObjectId,
+      ref: "Author",
       required: true,
     },
-    sale: {
-      type: Number,
-      required: true,
-    },
-  },
-  cover: {
-    url: String,
-    id: String,
-  },
-  fileInfo: {
-    type: Object,
-    required: true,
-    url: {
+    title: {
       type: String,
       required: true,
+      trim: true,
     },
-    id: {
+    slug: {
       type: String,
       required: true,
+      unique: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    language: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    publishedAt: {
+      type: Date,
+      required: true,
+      trim: true,
+    },
+    publicationName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    genre: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    price: {
+      type: Object,
+      required: true,
+      mrp: {
+        type: Number,
+        required: true,
+      },
+      sale: {
+        type: Number,
+        required: true,
+      },
+    },
+    cover: {
+      id: {
+        type: String,
+      },
+      url: {
+        type: String,
+      },
+    },
+    fileInfo: {
+      type: Object,
+      required: true,
+      id: {
+        type: String,
+        required: true,
+      },
+      url: {
+        type: String,
+        required: true,
+      },
+    },
+    averageRating: {
+      type: Number,
+      default: 0,
     },
   },
+  { timestamps: true },
+);
+
+bookSchema.pre("save", function (next) {
+  const { mrp, sale } = this.price;
+  this.price = { mrp: mrp * 100, sale: sale * 100 };
+
+  next();
 });
 
-bookSchema.pre("save", function (next){
-  const {mrp, sale} = this.price
-  this.price = {mrp: mrp * 100, sale: sale * 100}
+const BookModel = model("Book", bookSchema);
 
-  next()
-})
-
-const Book = model("Book", bookSchema);
-
-export default Book as Model<BookDoc>;
+export default BookModel as Model<BookDoc>;

@@ -1,9 +1,39 @@
-import store from "../store";
+import store from "../redux/store.ts";
+
+export interface Profile {
+  id: string;
+  name?: string;
+  email: string;
+  role: "user" | "author";
+  avatar?: string;
+  signedUp: boolean;
+  authorId?: string;
+  books?: string[];
+}
+
+export interface BackendErrorResponse {
+  success: false;
+  message: string;
+}
+
+export interface CatchErrorResponse {
+  success: false;
+  message: string;
+  data?: any;
+}
+
+export interface APIError {
+  error?: string;
+  errors?: Record<string, string[]>;
+  message?: string;
+}
 
 export type NewUserInfo = {
   name: string;
   avatar?: File;
 };
+
+export type RootState = ReturnType<typeof store.getState>;
 
 export interface Profile {
   id: string;
@@ -21,13 +51,84 @@ export type AuthState = {
   status: "busy" | "authenticated" | "unauthenticated";
 };
 
+export interface IBookPublicDetails {
+  id: string;
+  title: string;
+  genre: string;
+  language: string;
+  slug: string;
+  publicationName: string;
+  publishedAt: string;
+  description: string;
+  cover: string | undefined;
+  rating: string | undefined;
+  fileInfo: {
+    size: string;
+    key: string;
+  };
+  price: {
+    mrp: string | number;
+    sale: string | number;
+  };
+  author: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+}
+export interface CartItemAPI {
+  quantity: number;
+  product: {
+    id: string;
+    title: string;
+    slug: string;
+    cover?: string;
+    price: {
+      mrp: string | number;
+      sale: string | number;
+    };
+  };
+}
+
+export type CartItem =
+  | {
+      product: IBookPublicDetails;
+      quantity: number;
+    }
+  | CartItemAPI;
+
+export interface ICartState {
+  id?: string;
+  items: CartItem[];
+}
+
 export interface IAuthContext {
   profile: AuthState["profile"];
   status: AuthState["status"];
   signOut: () => void;
+  updateProfileInfo: () => Promise<void>;
 }
 
-export type RootState = ReturnType<typeof store.getState>;
+export interface FeaturedBook {
+  title: string;
+  genre: string;
+  slug: string;
+  cover?: string;
+  slogan: string;
+}
+
+export interface InitialBookToUpdate {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  genre: string;
+  language: string;
+  cover?: string;
+  price: { mrp: string; sale: string };
+  publicationName: string;
+  publishedAt: string;
+}
 
 export interface BookDefaultForm {
   file?: File | null;
@@ -61,18 +162,17 @@ export interface BookToSubmit {
     size: number;
   };
 }
-
-export interface InitialBookToUpdate {
+export interface IBookByGenre {
   id: string;
-  slug: string;
   title: string;
-  description: string;
   genre: string;
-  language: string;
+  slug: string;
   cover?: string;
-  price: { mrp: string; sale: string };
-  publicationName: string;
-  publishedAt: string;
+  rating?: number;
+  price: {
+    mrp: number;
+    sale: number;
+  };
 }
 
 export interface AuthorInfo {
@@ -89,63 +189,18 @@ export interface AuthorInitialState extends AuthorInfo {
   id: string;
 }
 
-export interface FeaturedBook {
-  title: string;
-  genre: string;
-  slug: string;
-  cover?: string;
-  slogan: string;
-}
-
-export interface IBookByGenre {
+export interface Review {
+  content: string;
+  date: string;
   id: string;
-  title: string;
-  genre: string;
-  slug: string;
-  cover?: string;
-  rating?: number;
-  price: {
-    mrp: number;
-    sale: number;
-  };
-}
-
-export interface IBookPublicDetails {
-  id: string;
-  title: string;
-  genre: string;
-  language: string;
-  slug: string;
-  publicationName: string;
-  publishedAt: string;
-  description: string;
-  cover: string | undefined;
-  rating: string | undefined;
-  fileInfo: {
-    size: string;
-    key: string;
-  };
-  price: {
-    mrp: string | number;
-    sale: string | number;
-  };
-  author: {
+  rating: number;
+  user: {
     id: string;
     name: string;
-    slug: string;
+    avatar?: {
+      url: string;
+    };
   };
-}
-
-export type CartItem =
-  | {
-      product: IBookPublicDetails;
-      quantity: number;
-    }
-  | CartItemAPI;
-
-export interface ICartState {
-  id?: string;
-  items: CartItem[];
 }
 
 export interface ICartContext {
@@ -167,19 +222,7 @@ export type UpdateItem = {
 export interface IUpdateCartApi {
   items: UpdateItem[];
 }
-export interface CartItemAPI {
-  quantity: number;
-  product: {
-    id: string;
-    title: string;
-    slug: string;
-    cover?: string;
-    price: {
-      mrp: string | number;
-      sale: string | number;
-    };
-  };
-}
+
 export interface CartApiResponse {
   success?: boolean;
   message?: string;
@@ -214,26 +257,6 @@ export interface IOrders {
   orderItem: OrderItem[];
 }
 
-export interface IAddReviewFormData {
-  bookId: string;
-  content: string;
-  rating: number;
-}
-
-export interface Review {
-  content: string;
-  date: string;
-  id: string;
-  rating: number;
-  user: {
-    id: string;
-    name: string;
-    avatar?: {
-      url: string;
-    };
-  };
-}
-
 export interface ILibraryBook {
   id: string;
   title: string;
@@ -244,6 +267,12 @@ export interface ILibraryBook {
     name: string;
     slug: string;
   };
+}
+
+export interface IAddReviewFormData {
+  bookId: string;
+  content: string;
+  rating: number;
 }
 
 export type Highlight = {

@@ -1,78 +1,92 @@
-import { Response, Request, RequestHandler } from "express";
 import { UpdateHistoryRequestHandler } from "@/types";
-import History from "@/models/history-model";
+import { handleError, sendErrorResponse } from "@/utils/helper";
+import HistoryModel from "@/models/history-model";
+import { RequestHandler } from "express";
 import { isValidObjectId } from "mongoose";
-import { sendErrorResponse } from "@/utils/helper";
 
 export const updateBookHistory: UpdateHistoryRequestHandler = async (
-  req: Request,
-  res: Response
+  req,
+  res,
 ) => {
-  const { bookId, highlights, lastLocation, remove } = req.body;
+  try {
+    const { bookId, highlights, lastLocation, remove } = req.body;
 
-  let history = await History.findOne({ book: bookId, reader: req.user.id });
-
-  if (!history) {
-    history = new History({
-      reader: req.user.id,
+    let history = await HistoryModel.findOne({
       book: bookId,
-      lastLocation,
-      highlights,
+      reader: req.user.id,
     });
-  } else {
-    if (lastLocation) history.lastLocation = lastLocation;
-    if (highlights?.length && !remove) history.highlights.push(...highlights);
 
-    if (highlights?.length && remove) {
-      // history.highlights = history.highlights.filter((item) => {
-      //   const highlight = highlights.find((h) => {
-      //     if (h.selection === item.selection) {
-      //       return h;
-      //     }
-      //   });
-      //
-      //   if (!highlight) return true;
-      // });
-      history.highlights = history.highlights.filter(
-        (item) =>
-          !highlights.find(
-            (h: { selection: string; fill: string }) =>
-              h.selection === item.selection
-          )
-      );
+    if (!history) {
+      history = new HistoryModel({
+        reader: req.user.id,
+        book: bookId,
+        lastLocation,
+        highlights,
+      });
+    } else {
+      if (lastLocation) history.lastLocation = lastLocation;
+      if (highlights?.length && !remove) history.highlights.push(...highlights);
+
+      if (highlights?.length && remove) {
+        history.highlights = history.highlights.filter(
+          (item) =>
+            !highlights.find(
+              (h: { selection: string; fill: string }) =>
+                h.selection === item.selection,
+            ),
+        );
+      }
     }
+
+    await history.save();
+
+    res.status(200).json({
+      success: true,
+      message: "History updated successfully!",
+    });
+  } catch (error) {
+    handleError(error, res);
   }
-
-  await history.save();
-
-  res.send();
 };
 
-export const getBookHistory: RequestHandler = async (
-  req: Request,
-  res: Response
-) => {
-  const { bookId } = req.params;
+export const getBookHistory: RequestHandler = async (req, res) => {
+  try {
+    const { bookId } = req.params;
 
-  if (!isValidObjectId(bookId))
-    return sendErrorResponse({ res, message: "Invalid book Id!", status: 422 });
+    if (!isValidObjectId(bookId)) {
+      return sendErrorResponse({
+        res,
+        message: "Invalid book id",
+        statusCode: 422,
+      });
+    }
 
-  const history = await History.findOne({ book: bookId, reader: req.user.id });
-
-  if (!history)
-    return sendErrorResponse({
-      res,
-      message: "No history found!",
-      status: 404,
+    const history = await HistoryModel.findOne({
+      book: bookId,
+      reader: req.user.id,
     });
 
-  res.json({
-    history: {
+    if (!history) {
+      return sendErrorResponse({
+        res,
+        message: "History not found",
+        status: 404,
+      });
+    }
+
+    const formattedHistory = {
       lastLocation: history.lastLocation,
-      highlights: history.highlights.map((h) => ({
-        fill: h.fill,
-        selection: h.selection,
+      highlights: history.highlights.map((highlight) => ({
+        selection: highlight.selection,
+        fill: highlight.fill,
       })),
-    },
-  });
+    };
+
+    res.status(200).json({
+      success: true,
+      data: formattedHistory,
+    });
+  } catch (error) {
+    handleError(error, res);
+  }
 };

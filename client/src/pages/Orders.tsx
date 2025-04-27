@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import { getOrdersApi } from "../apis/order.ts";
-import toast from "react-hot-toast";
-import dateFormat from "dateformat";
-import Skeletons from "../components/skeletons";
 import { IOrders } from "../types";
-import DividerWithTitle from "../components/common/DividerWithTitle.tsx";
-import { Link } from "react-router-dom";
-import { formatPrice } from "../helper";
+import { getOrdersApi } from "../apis/order.ts";
+import { addToast, Chip, Divider } from "@heroui/react";
+import Skeletons from "../components/skeletons";
+import { formatPrice } from "../helpers";
 import { IoCloseOutline } from "react-icons/io5";
-import { Chip, Divider } from "@nextui-org/react";
+import { Link } from "react-router-dom";
+import DividerWithTitle from "../components/common/DividerWithTitle.tsx";
+import dateFormat from "dateformat";
 
 const Orders = () => {
   const [busy, setBusy] = useState(true);
@@ -18,7 +17,11 @@ const Orders = () => {
     const response = await getOrdersApi();
     setBusy(false);
     if (!response.success) {
-      return toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
 
     setOrders(response.data);
@@ -34,8 +37,8 @@ const Orders = () => {
   if (!orders?.length)
     return (
       <div className="p-5 lg:p-0">
-        <h1 className="text-xl font-semibold mb-6">Your Orders</h1>
-        <div className="text-center pt-10 font-bold text-3xl opacity-60">
+        <h1 className="mb-6 text-xl font-semibold">Your Orders</h1>
+        <div className="pt-10 text-center text-3xl font-bold opacity-60">
           <p>{"Your don't have any orders!"}</p>
         </div>
       </div>
@@ -43,7 +46,7 @@ const Orders = () => {
 
   return (
     <div className={"p-5 lg:p-0"}>
-      <h1 className="text-xl font-semibold mb-6">Your Orders</h1>
+      <h1 className="mb-6 text-xl font-semibold">Your Orders</h1>
 
       {orders?.map((order) => (
         <div key={order.id}>
@@ -85,8 +88,8 @@ const Orders = () => {
             </div>
           ))}
 
-          <div className={"text-right space-y-1 py-6"}>
-            <p className="font-semibold text-xl">
+          <div className={"space-y-1 py-6 text-right"}>
+            <p className="text-xl font-semibold">
               Total Amount: {formatPrice(Number(order.totalAmount))}
             </p>
             <p>Payment Status: {order.paymentStatus?.toUpperCase()}</p>
@@ -96,5 +99,4 @@ const Orders = () => {
     </div>
   );
 };
-
 export default Orders;

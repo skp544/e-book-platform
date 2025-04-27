@@ -1,5 +1,5 @@
-import { Switch } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import { Switch } from "@heroui/react";
 import { IoMoon, IoSunnyOutline } from "react-icons/io5";
 
 const DarkModeSwitch = () => {
@@ -49,5 +49,4 @@ const DarkModeSwitch = () => {
     />
   );
 };
-
 export default DarkModeSwitch;

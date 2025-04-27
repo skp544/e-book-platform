@@ -1,7 +1,11 @@
-import { catchError } from "../helper";
+import { catchError } from "../helpers";
 import client from "./client.ts";
 
-export const generateLinkApi = async (formData: { email: string }) => {
+interface GenerateLink {
+  email: string;
+}
+
+export const generateLink = async (formData: GenerateLink) => {
   try {
     const { data } = await client.post("/auth/generate-link", formData);
 
@@ -23,7 +27,8 @@ export const updateProfileApi = async (formData: FormData) => {
 
 export const getProfileApi = async () => {
   try {
-    const { data } = await client("/auth/profile");
+    const { data } = await client.get("/auth/profile");
+
     return data;
   } catch (e) {
     return catchError(e);

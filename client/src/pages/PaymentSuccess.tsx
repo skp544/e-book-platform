@@ -1,11 +1,10 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { orderSuccessApi } from "../apis/order.ts";
-import toast from "react-hot-toast";
 import { Order } from "../types";
-import { formatPrice } from "../helper";
-import { Divider } from "@nextui-org/react";
+import { orderSuccessApi } from "../apis/order.ts";
+import { addToast, Divider } from "@heroui/react";
 import Skeletons from "../components/skeletons";
+import { formatPrice } from "../helpers";
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -21,7 +20,11 @@ const PaymentSuccess = () => {
     setBusy(false);
 
     if (!response.success) {
-      return toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
 
     setOrder(response.data);
@@ -39,23 +42,23 @@ const PaymentSuccess = () => {
   }
 
   return (
-    <div className={"lg:p-0 p-5"}>
-      <h1 className={"font-semibold text-2xl"}>
+    <div className={"p-5 lg:p-0"}>
+      <h1 className={"text-2xl font-semibold"}>
         Congrats Your Order is Successful.
       </h1>
-      <div className={"p-5 flex flex-col items-center"}>
+      <div className={"flex flex-col items-center p-5"}>
         {order?.orders.map((item) => (
-          <div key={item.id} className={" w-96 "}>
+          <div key={item.id} className={"w-96"}>
             <div className={"flex"}>
               <img
                 src={item.cover}
                 alt={item.title}
-                className={"w-28 h-40 rounded"}
+                className={"h-40 w-28 rounded"}
               />
 
-              <div className={"p-3 flex-1"}>
+              <div className={"flex-1 p-3"}>
                 <Link
-                  className={"line-clamp-1 font-bold text-lg underline"}
+                  className={"line-clamp-1 text-lg font-bold underline"}
                   to={`/book/${item.slug}`}
                 >
                   {item.title}
@@ -77,5 +80,4 @@ const PaymentSuccess = () => {
     </div>
   );
 };
-
 export default PaymentSuccess;

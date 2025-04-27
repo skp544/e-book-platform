@@ -1,32 +1,34 @@
-import {Model, model, ObjectId, Schema} from "mongoose";
-import {Settings} from "@/types";
+import { Model, model, ObjectId, Schema } from "mongoose";
+import { Settings } from "@/types";
 
-export  interface  HistoryDoc extends  Settings{
-    book: ObjectId
-    reader: ObjectId,
-
-
+export interface HistoryDoc extends Settings {
+  book: ObjectId;
+  reader: ObjectId;
 }
 
-const historySchema = new Schema<HistoryDoc>({
+const historySchema = new Schema<HistoryDoc>(
+  {
     book: {
-        type: Schema.ObjectId,
-        ref: 'Book',
-        required: true,
+      type: Schema.ObjectId,
+      ref: "Book",
+      required: true,
     },
     reader: {
-        type: Schema.ObjectId,
-        ref: "User",
-        required: true,
+      type: Schema.ObjectId,
+      ref: "User",
+      required: true,
     },
     lastLocation: String,
-    highlights: [{
+    highlights: [
+      {
         selection: String,
         fill: String,
-    }]
-}, {timestamps: true})
+      },
+    ],
+  },
+  { timestamps: true },
+);
 
+const HistoryModel = model("History", historySchema);
 
-const History = model("History", historySchema)
-
-export default History as Model<HistoryDoc>;
+export default HistoryModel as Model<HistoryDoc>;

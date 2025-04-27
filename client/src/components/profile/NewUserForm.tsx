@@ -1,6 +1,6 @@
-import { Avatar, Button, Input } from "@nextui-org/react";
-import { ChangeEventHandler, useState } from "react";
+import { ChangeEventHandler, FC, FormEventHandler, useState } from "react";
 import { NewUserInfo } from "../../types";
+import { Avatar, Button, Input } from "@heroui/react";
 
 interface Props {
   name?: string;
@@ -10,7 +10,13 @@ interface Props {
   btnTitle: string;
 }
 
-const NewUserForm = ({ name, avatar, onSubmit, title, btnTitle }: Props) => {
+const NewUserForm: FC<Props> = ({
+  name,
+  avatar,
+  onSubmit,
+  title,
+  btnTitle,
+}) => {
   const [userInfo, setUserInfo] = useState<NewUserInfo>({
     name: "",
   });
@@ -38,7 +44,9 @@ const NewUserForm = ({ name, avatar, onSubmit, title, btnTitle }: Props) => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
+    event.preventDefault();
+
     const formData = new FormData();
 
     if (userInfo.name.trim().length < 3) {
@@ -57,17 +65,17 @@ const NewUserForm = ({ name, avatar, onSubmit, title, btnTitle }: Props) => {
   };
 
   return (
-    <div className={"flex-1 flex justify-center items-center"}>
+    <div className={"flex flex-1 items-center justify-center"}>
       <div
         className={
-          "w-96 border-2 p-5 rounded-md flex justify-center items-center flex-col"
+          "flex w-96 flex-col items-center justify-center rounded-md border-2 p-5"
         }
       >
         <h1 className={"text-center text-xl font-semibold"}>{title}</h1>
-        <form className={"w-full space-y-6 mt-6"}>
+        <form onSubmit={handleSubmit} className={"mt-6 w-full space-y-6"}>
           <label
             htmlFor={"avatar"}
-            className={"cursor-pointer flex items-center justify-center"}
+            className={"flex cursor-pointer items-center justify-center"}
           >
             <Avatar
               isBordered
@@ -96,12 +104,7 @@ const NewUserForm = ({ name, avatar, onSubmit, title, btnTitle }: Props) => {
             isInvalid={invalidForm}
             errorMessage={"Name must be at least 3 characters"}
           />
-          <Button
-            isLoading={busy}
-            type={"button"}
-            onPress={handleSubmit}
-            className={"w-full"}
-          >
+          <Button isLoading={busy} type={"submit"} className={"w-full"}>
             {btnTitle}
           </Button>
         </form>
@@ -109,5 +112,4 @@ const NewUserForm = ({ name, avatar, onSubmit, title, btnTitle }: Props) => {
     </div>
   );
 };
-
 export default NewUserForm;

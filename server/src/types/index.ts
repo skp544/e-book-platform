@@ -1,3 +1,5 @@
+import { z } from "zod";
+import { RequestHandler } from "express";
 import {
   cartItemsSchema,
   historyValidationSchema,
@@ -5,21 +7,22 @@ import {
   newBookSchema,
   newReviewSchema,
   updateBookSchema,
-} from "@/middlewares/validate-middleware";
-import { RequestHandler } from "express";
+} from "@/middlewares/validator";
 import { ObjectId, Schema } from "mongoose";
-import { z } from "zod";
 import Stripe from "stripe";
 
 type AuthorHandlerBody = z.infer<typeof newAuthorSchema>;
 type NewBookBody = z.infer<typeof newBookSchema>;
-type UpdateBookBody = z.infer<typeof updateBookSchema>;
-type AddReviewBody = z.infer<typeof newReviewSchema>;
-type HistoryBookBody = z.infer<typeof historyValidationSchema>;
-type PurchasedByTheUserBody = { bookId: string };
-type CartBody = z.infer<typeof cartItemsSchema>;
 
-// type CustomRequestHandler<T> =
+type UpdateBookBody = z.infer<typeof updateBookSchema>;
+
+type AddReviewBody = z.infer<typeof newReviewSchema>;
+
+type HistoryBookBody = z.infer<typeof historyValidationSchema>;
+
+type PurchasedByTheUserBody = { bookId: string };
+
+type CartBody = z.infer<typeof cartItemsSchema>;
 
 export type RequestAuthorHandler = RequestHandler<{}, {}, AuthorHandlerBody>;
 
@@ -64,7 +67,7 @@ export interface PopulatedBooks {
       cover: string | undefined;
       slug: string;
       author: { name: string; slug: string };
-    }
+    },
   ): unknown;
 }
 
@@ -81,6 +84,7 @@ export interface Settings {
     fill: string;
   }[];
 }
+
 export type StripeLineItems = Stripe.Checkout.SessionCreateParams.LineItem[];
 
 export type options = {

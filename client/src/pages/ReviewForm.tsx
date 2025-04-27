@@ -1,10 +1,9 @@
 import { useParams } from "react-router-dom";
-import { Button } from "@nextui-org/react";
-import { FaRegStar, FaStar } from "react-icons/fa6";
 import { FormEventHandler, useEffect, useState } from "react";
-import RichEditor from "../components/rich-editor";
-import toast from "react-hot-toast";
+import { addToast, Button } from "@heroui/react";
 import { addReviewApi, getReviewApi } from "../apis/review.ts";
+import { FaRegStar, FaStar } from "react-icons/fa";
+import RichEditor from "../components/rich-editor";
 
 const ReviewForm = () => {
   const { bookId } = useParams();
@@ -24,7 +23,11 @@ const ReviewForm = () => {
     if (!bookId) return;
 
     if (!selectedRatings.length) {
-      return toast.error("Please select some rating");
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: "Please select a rating",
+      });
     }
 
     setLoading(true);
@@ -38,17 +41,31 @@ const ReviewForm = () => {
     setLoading(false);
 
     if (!response.success) {
-      return toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
-    toast.success(response.message);
+    addToast({
+      color: "success",
+      title: "Added",
+      description: response.message,
+    });
   };
 
   const fetchAllReviews = async () => {
     if (!bookId) return;
+
     const response = await getReviewApi(bookId);
     setFetching(false);
+
     if (!response.success) {
-      return toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
 
     setContent(response?.data?.content || "");
@@ -62,13 +79,13 @@ const ReviewForm = () => {
 
   if (fetching)
     return (
-      <div className="text-center p-5">
+      <div className="p-5 text-center">
         <p>Please wait...</p>
       </div>
     );
 
   return (
-    <form onSubmit={handleSubmit} className={"p-5 space-y-6"}>
+    <form onSubmit={handleSubmit} className={"space-y-6 p-5"}>
       {ratings.map((_, index) => {
         return (
           <Button
@@ -101,5 +118,4 @@ const ReviewForm = () => {
     </form>
   );
 };
-
 export default ReviewForm;

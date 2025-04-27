@@ -3,16 +3,18 @@ import { useEffect, useState } from "react";
 import Navigator from "./Navigator.tsx";
 import LoadingIndicator from "./LoadingIndicator.tsx";
 import TableOfContent, { BookNavList } from "./TableOfConents.tsx";
-import { Highlight, RelocatedEvent } from "../../types";
-import { Button } from "@nextui-org/react";
+import { Highlight, LocationChangedEvent, RelocatedEvent } from "../../types";
+import { Button } from "@heroui/react";
 import { IoMenu } from "react-icons/io5";
 import { MdOutlineStickyNote2 } from "react-icons/md";
 import ThemeOptions, { ThemeModes } from "./ThemeOptions.tsx";
 import FontOptions from "./FontOptions.tsx";
 import HighlightOptions from "./HighlightOptions.tsx";
+import { debounce } from "../../helpers";
+import NotesModal from "./NotesModal.tsx";
 
 interface Props {
-  url?: Object;
+  url?: string;
   title?: string;
   lastLocation?: string;
   highlights: Highlight[];
@@ -23,6 +25,24 @@ interface Props {
 
 const container = "epub_container";
 const wrapper = "epub_wrapper";
+const DARK_THEME = {
+  body: {
+    color: "#f8f8ea !important",
+    background: "#2B2B2B !important",
+  },
+  a: {
+    color: "#f8f8ea !important",
+  },
+};
+const LIGHT_THEME = {
+  body: {
+    color: "#000 !important",
+    background: "#fff !important",
+  },
+  a: {
+    color: "blue !important",
+  },
+};
 
 const selectTheme = (rendition: Rendition, mode: ThemeModes) => {
   if (mode === "light") {
@@ -73,6 +93,7 @@ const loadTableOfContent = async (book: Book) => {
     entires.sort((a, b) => a[1] - b[1]);
     spineHref = entires.map(([key]) => key);
   }
+
   const { toc } = nav;
 
   const navLabels: BookNavList[] = [];
@@ -98,7 +119,33 @@ const loadTableOfContent = async (book: Book) => {
   return navLabels;
 };
 
-const EpubReader = ({ url, title }: Props) => {
+const applyHighlights = async (
+  rendition: Rendition,
+  highlights: Highlight[],
+) => {
+  highlights.forEach(({ selection, fill }) => {
+    rendition.annotations.remove(selection, "highlight");
+    rendition.annotations.highlight(
+      selection,
+      undefined,
+      undefined,
+      undefined,
+      {
+        fill,
+      },
+    );
+  });
+};
+
+const EpubReader = ({
+  url,
+  title,
+  highlights,
+  lastLocation,
+  onHighlight,
+  onHighlightClear,
+  onLocationChanged,
+}: Props) => {
   const [rendition, setRendition] = useState<Rendition>();
   const [loading, setLoading] = useState(true);
   const [showNotes, setShowNotes] = useState(false);
@@ -123,6 +170,23 @@ const EpubReader = ({ url, title }: Props) => {
     const end = location.end.displayed.page;
     const total = location.start.displayed.total;
     setPage({ start, end, total });
+  };
+
+  const handleOnHighlightClear = () => {
+    if (!rendition) return;
+
+    rendition.annotations.remove(selectedCfi, "highlight");
+    setShowHighlightOptions(false);
+    onHighlightClear(selectedCfi);
+  };
+
+  const handleHighlightSelection = (fill: string) => {
+    if (!rendition) return;
+
+    const newHighlight = { fill, selection: selectedCfi };
+    applyHighlights(rendition, [newHighlight]);
+    setShowHighlightOptions(false);
+    onHighlight(newHighlight);
   };
 
   const handleNavigation = (href: string) => {
@@ -157,52 +221,118 @@ const EpubReader = ({ url, title }: Props) => {
     updatePageCounts(rendition);
   };
 
+  const handleOnNotesClick = (path: string) => {
+    if (!locationBeforeNoteOpen)
+      setLocationBeforeNoteOpen(settings.currentLocation);
+    handleNavigation(path);
+  };
+
+  useEffect(() => {
+    if (!rendition) return;
+    // basic book styling
+    rendition.themes.fontSize(settings.fontSize + "px");
+
+    rendition.on("locationChanged", () => {
+      applyHighlights(rendition, highlights);
+    });
+
+    rendition.on("relocated", (evt: RelocatedEvent) => {
+      setSettings((old) => ({ ...old, currentLocation: evt.start.cfi }));
+    });
+  }, [rendition, highlights, settings.fontSize]);
+
   useEffect(() => {
     if (!url) return;
 
     const book = new Book(url);
-    const { width, height } = getElementSize(wrapper);
+    const { height, width } = getElementSize(wrapper);
     const rendition = book.renderTo(container, {
       width,
       height,
     });
 
-    rendition.display();
+    if (lastLocation) rendition.display(lastLocation);
+    else rendition.display();
+
+    // Registering The Theme Options
+    rendition.themes.register("light", LIGHT_THEME);
+    rendition.themes.register("dark", DARK_THEME);
+
+    const debounceSetShowHighlightOption = debounce(
+      setShowHighlightOptions,
+      3000,
+    );
+    const debounceUpdateLoading = debounce(setLoading, 500);
+
+    // Let's listen if resized is finished
+    rendition.on("resized", () => {
+      debounceUpdateLoading(false);
+    });
 
     // Let's fire the on click if we click inside the book
     rendition.on("click", () => {
       hideToc();
     });
 
-    // book.loaded.navigation.then(console.log);
+    // Let's listen to the text selection
+    rendition.on("selected", (cfi: string) => {
+      setShowHighlightOptions(true);
+      setSelectedCfi(cfi);
+      debounceSetShowHighlightOption(false);
+    });
+
+    // Let's listen to the highlight click
+    rendition.on("markClicked", (cfi: string) => {
+      setShowHighlightOptions(true);
+      setSelectedCfi(cfi);
+      debounceSetShowHighlightOption(false);
+    });
+
+    rendition.on("displayed", () => {
+      updatePageCounts(rendition);
+    });
+    rendition.on("locationChanged", (evt: LocationChangedEvent) => {
+      onLocationChanged(evt.start);
+      updatePageCounts(rendition);
+    });
+
     loadTableOfContent(book)
       .then(setTableOfContent)
       .finally(() => {
         setLoading(false);
       });
 
-    // rendition.on("rendered", () => {
-    //   rendition.display();
-    //   setLoading(false);
-    //   // rendition.next(2);
-    // });
-
     setRendition(rendition);
 
     return () => {
-      if (book) {
-        book.destroy();
-      }
+      if (book) book.destroy();
     };
-  }, [url]);
+  }, [url, lastLocation, onLocationChanged]);
+
+  useEffect(() => {
+    if (!rendition) return;
+
+    const handleResize = () => {
+      setLoading(true);
+
+      const { height, width } = getElementSize(wrapper);
+      rendition.resize(width, height);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [rendition]);
 
   return (
-    <div className="h-screen flex flex-col group dark:bg-book-dark dark:text-book-dark">
+    <div className="dark:bg-book-dark dark:text-book-dark group flex h-screen flex-col">
       <LoadingIndicator visible={loading} />
 
-      <div className="flex items-center h-14 shadow-md opacity-0 group-hover:opacity-100 transition">
-        <div className="max-w-3xl md:mx-auto md:pl-0 pl-5">
-          <h1 className="line-clamp-1 font-semibold text-large">{title}</h1>
+      <div className="flex h-14 items-center opacity-0 shadow-md transition group-hover:opacity-100">
+        <div className="max-w-3xl pl-5 md:mx-auto md:pl-0">
+          <h1 className="line-clamp-1 text-large font-semibold">{title}</h1>
         </div>
 
         <div className="ml-auto">
@@ -230,7 +360,7 @@ const EpubReader = ({ url, title }: Props) => {
         </div>
       </div>
 
-      <div className={"h-full relative"} id={wrapper}>
+      <div className={"relative h-full"} id={wrapper}>
         <div id={container} />
 
         <Navigator
@@ -260,9 +390,40 @@ const EpubReader = ({ url, title }: Props) => {
 
       <HighlightOptions
         visible={showHighlightOption}
-        // onSelect={handleHighlightSelection}
-        // onClear={handleOnHighlightClear}
+        onSelect={handleHighlightSelection}
+        onClear={handleOnHighlightClear}
       />
+
+      <NotesModal
+        book={rendition?.book}
+        notes={highlights.map(({ selection }) => selection)}
+        isOpen={showNotes}
+        onClose={() => setShowNotes(false)}
+        onNoteClick={handleOnNotesClick}
+      />
+
+      <div className="flex h-10 items-center justify-center opacity-0 group-hover:opacity-100">
+        <div className="flex-1 text-center">
+          <p>Page {`${page.start} - ${page.total}`}</p>
+        </div>
+
+        {locationBeforeNoteOpen ? (
+          <button
+            onClick={() => {
+              setLocationBeforeNoteOpen("");
+              handleNavigation(locationBeforeNoteOpen);
+            }}
+          >
+            Go to Previous Location
+          </button>
+        ) : null}
+
+        {page.start === page.end ? null : (
+          <div className="flex-1 text-center">
+            <p>Page {`${page.end} - ${page.total}`}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

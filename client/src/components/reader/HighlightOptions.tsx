@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import clsx from "clsx";
 import { FC } from "react";
 import { MdOutlineClear } from "react-icons/md";
@@ -16,7 +16,7 @@ const HighlightOptions: FC<Props> = ({ visible, onSelect, onClear }) => {
     <div
       className={clsx(
         visible ? "bottom-0" : "-bottom-14",
-        "transition-all h-14 fixed z-50 left-0 right-0 flex items-center justify-center space-x-3 dark:bg-book-dark bg-gray-100",
+        "dark:bg-book-dark fixed left-0 right-0 z-50 flex h-14 items-center justify-center space-x-3 bg-gray-100 transition-all",
       )}
     >
       {colorOptions.map((color) => {
@@ -25,7 +25,7 @@ const HighlightOptions: FC<Props> = ({ visible, onSelect, onClear }) => {
             onClick={() => onSelect(color)}
             key={color}
             style={{ backgroundColor: color }}
-            className="w-6 h-6 rounded-full"
+            className="h-6 w-6 rounded-full"
           ></button>
         );
       })}

@@ -1,22 +1,21 @@
-import { FC } from "react";
-import { Chip } from "@nextui-org/react";
-import { Link } from "react-router-dom";
-import { FaStar } from "react-icons/fa6";
-import DividerWithTitle from "../common/DividerWithTitle.tsx";
-import { calculateDiscount, formatPrice } from "../../helper";
 import { IBookByGenre } from "../../types";
+import { FC } from "react";
+import DividerWithTitle from "../common/DividerWithTitle.tsx";
+import { Chip } from "@heroui/react";
+import { FaStar } from "react-icons/fa";
+import { calculateDiscount, formatPrice } from "../../helpers";
+import { Link } from "react-router-dom";
 
 interface Props {
   data: IBookByGenre[];
   title?: string;
 }
 
-const BookList: FC<Props> = ({ title, data }) => {
+const BookList: FC<Props> = ({ data, title }) => {
   return (
     <div>
       <DividerWithTitle title={title} />
-
-      <div className="mt-6 grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 gap-5">
+      <div className="mt-6 grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         {data.map((book) => {
           return (
             <Link key={book.id} to={`/book/${book.slug}`}>
@@ -24,11 +23,11 @@ const BookList: FC<Props> = ({ title, data }) => {
                 <img
                   src={book.cover}
                   alt={book.title}
-                  className="w-32 h-[185px] object-contain rounded"
+                  className="h-[185px] w-32 rounded object-contain"
                 />
 
                 <div className="w-full space-y-2">
-                  <p className="font-bold line-clamp-2">{book.title}</p>
+                  <p className="line-clamp-2 font-bold">{book.title}</p>
 
                   <Chip color="danger" radius="sm" size="sm">
                     {calculateDiscount(book.price)}% Off
@@ -49,7 +48,7 @@ const BookList: FC<Props> = ({ title, data }) => {
                 <div className="w-full">
                   {book.rating ? (
                     <Chip radius="sm" color="warning" variant="solid">
-                      <div className="flex items-center font-semibold text-sm space-x-1">
+                      <div className="flex items-center space-x-1 text-sm font-semibold">
                         <span>{book.rating}</span> <FaStar />
                       </div>
                     </Chip>
@@ -65,5 +64,4 @@ const BookList: FC<Props> = ({ title, data }) => {
     </div>
   );
 };
-
 export default BookList;

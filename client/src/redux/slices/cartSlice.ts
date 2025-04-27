@@ -1,5 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { CartItem, ICartState, RootState } from "../types";
+import { CartItem, ICartState, RootState } from "../../types";
 
 const initialState: ICartState = {
   items: [],
@@ -20,7 +20,7 @@ const slice = createSlice({
 
     updateCartItems(state, { payload }: PayloadAction<CartItem>) {
       const index = state.items.findIndex(
-        (item) => item.product.id === payload.product.id
+        (item) => item.product.id === payload.product.id,
       );
 
       if (index === -1) {
@@ -53,7 +53,7 @@ export const getCartState = createSelector(
       }, 0),
       ...cart,
     };
-  }
+  },
 );
 
 export const { updateCartState, updateCartId, updateCartItems } = slice.actions;

@@ -1,9 +1,4 @@
-import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@nextui-org/react";
+import { Button, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { FC } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { RiFontSize } from "react-icons/ri";

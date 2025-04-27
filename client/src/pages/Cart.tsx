@@ -1,12 +1,12 @@
-import useCart from "../hooks/useCart";
-import Skeletons from "../components/skeletons";
-import { Button, Chip, Divider } from "@nextui-org/react";
-import { calculateDiscount, formatPrice } from "../helper";
-import { FaMinus, FaPlus, FaRegTrashCan } from "react-icons/fa6";
-import { MdOutlineShoppingCartCheckout } from "react-icons/md";
-import { checkoutApi } from "../apis/checkout";
-import toast from "react-hot-toast";
+import useCart from "../hooks/useCart.ts";
 import { useState } from "react";
+import { checkoutApi } from "../apis/checkout.ts";
+import { addToast, Button, Chip, Divider } from "@heroui/react";
+import Skeletons from "../components/skeletons";
+import { calculateDiscount, formatPrice } from "../helpers";
+import { MdOutlineShoppingCartCheckout } from "react-icons/md";
+import { FaRegTrashCan } from "react-icons/fa6";
+import { FaMinus, FaPlus } from "react-icons/fa";
 
 const Cart = () => {
   const [busy, setBusy] = useState(false);
@@ -30,7 +30,11 @@ const Cart = () => {
     setBusy(false);
 
     if (!response.success) {
-      return toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
 
     if (response.checkoutUrl) {
@@ -44,10 +48,10 @@ const Cart = () => {
 
   if (!totalCount)
     return (
-      <div className="lg:p-0 p-5">
-        <h1 className="text-xl mb-6 font-semibold">Your Shopping Cart</h1>
+      <div className="p-5 lg:p-0">
+        <h1 className="mb-6 text-xl font-semibold">Your Shopping Cart</h1>
         <div className="p-5 text-center">
-          <h1 className="text-3xl opacity-40 font-semibold">
+          <h1 className="text-3xl font-semibold opacity-40">
             This Cart is Empty!
           </h1>
         </div>
@@ -55,9 +59,9 @@ const Cart = () => {
     );
 
   return (
-    <div className="lg:p-0 p-5">
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl mb-6 font-semibold">Your Shopping Cart</h1>
+    <div className="p-5 lg:p-0">
+      <div className="flex items-center justify-between">
+        <h1 className="mb-6 text-xl font-semibold">Your Shopping Cart</h1>
         <button className="underline" onClick={clearCart} type="button">
           Clear Cart
         </button>
@@ -69,22 +73,22 @@ const Cart = () => {
               <img
                 src={product.cover}
                 alt={product.title}
-                className="w-28 h-[185px] object-cover rounded"
+                className="h-[185px] w-28 rounded object-cover"
               />
 
-              <div className="md:grid flex flex-col grid-cols-6">
+              <div className="flex grid-cols-6 flex-col md:grid">
                 <div className="col-span-5 p-5">
                   <h1>{product.title}</h1>
                   <div className="flex space-x-2">
                     <Chip color="danger">
                       {calculateDiscount(product.price)}% Off
                     </Chip>
-                    <h1 className="line-through italic">
+                    <h1 className="italic line-through">
                       {formatPrice(product.price.mrp)}
                     </h1>
                   </div>
                   <div className="flex space-x-2">
-                    <h1 className="line-through italic">
+                    <h1 className="italic line-through">
                       {formatPrice(product.price.sale)}
                     </h1>
 
@@ -132,12 +136,12 @@ const Cart = () => {
       </div>
 
       <Divider className="my-6" />
-      <div className="md:block flex justify-between items-end">
+      <div className="flex items-end justify-between md:block">
         <div className="text-right">
-          <h1 className="font-semibold text-xl">Cart Total</h1>
+          <h1 className="text-xl font-semibold">Cart Total</h1>
           <Divider />
           <p className="line-through">{formatPrice(subTotal)}</p>
-          <p className="font-semibold text-xl">{formatPrice(totalPrice)}</p>
+          <p className="text-xl font-semibold">{formatPrice(totalPrice)}</p>
         </div>
 
         <div className="text-right md:mt-3">
@@ -168,5 +172,4 @@ const Cart = () => {
     </div>
   );
 };
-
 export default Cart;

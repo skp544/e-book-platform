@@ -1,11 +1,11 @@
+import { FC, useEffect, useState } from "react";
+import { AuthorInfo, AuthorInitialState } from "../../types";
 import useAuth from "../../hooks/useAuth.ts";
 import RichEditor from "../rich-editor";
-import { useEffect, useState } from "react";
-import { Button, Input } from "@nextui-org/react";
+import ErrorList from "../common/ErrorList.tsx";
+import { Button, Input } from "@heroui/react";
 import { MdClose, MdOutlineAdd } from "react-icons/md";
 import { newAuthorSchema } from "../../schemas";
-import ErrorList from "../common/ErrorList.tsx";
-import { AuthorInfo, AuthorInitialState } from "../../types";
 
 interface Props {
   btnTitle?: string;
@@ -13,7 +13,7 @@ interface Props {
   initialState?: AuthorInitialState;
 }
 
-const AuthorForm = ({ btnTitle, onSubmit, initialState }: Props) => {
+const AuthorForm: FC<Props> = ({ btnTitle, onSubmit, initialState }) => {
   const { profile } = useAuth();
   const [socialLinks, setSocialLinks] = useState([""]);
   const [about, setAbout] = useState("");
@@ -56,7 +56,7 @@ const AuthorForm = ({ btnTitle, onSubmit, initialState }: Props) => {
     const result = newAuthorSchema.safeParse(data);
 
     if (!result.success) {
-      setErrors(result.error.flatten().fieldErrors);
+      return setErrors(result.error.flatten().fieldErrors);
     }
 
     setBusy(true);
@@ -76,9 +76,9 @@ const AuthorForm = ({ btnTitle, onSubmit, initialState }: Props) => {
   }, [initialState]);
 
   return (
-    <div className={"p-4 space-y-4"}>
+    <div className={"space-y-4 p-4"}>
       <p>
-        Name: <span className={"font-semibold text-lg"}>{profile?.name}</span>
+        Name: <span className={"text-lg font-semibold"}>{profile?.name}</span>
       </p>
 
       <RichEditor
@@ -129,5 +129,4 @@ const AuthorForm = ({ btnTitle, onSubmit, initialState }: Props) => {
     </div>
   );
 };
-
 export default AuthorForm;

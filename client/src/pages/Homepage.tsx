@@ -1,7 +1,7 @@
-import BookByGenre from "../components/book/BookByGenre.tsx";
-import HeroSection from "../components/HeroSection";
+import HeroSection from "../components/home/HeroSection.tsx";
+import BookByGenre from "../components/home/BookByGenre.tsx";
 
-const Home = () => {
+const Homepage = () => {
   return (
     <div className="space-y-10 px-5 lg:p-0">
       <HeroSection />
@@ -13,5 +13,4 @@ const Home = () => {
     </div>
   );
 };
-
-export default Home;
+export default Homepage;

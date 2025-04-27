@@ -1,47 +1,52 @@
 import { useEffect, useState } from "react";
-import AuthorForm from "../components/author/AuthorForm";
-import useAuth from "../hooks/useAuth";
-import {
-  getAuthorDetailsApi,
-  registerAuthorApi,
-  updateAuthorApi,
-} from "../apis/author";
-import toast from "react-hot-toast";
-import LoadingSpinner from "../components/common/LoadingSpinner";
+import useAuth from "../hooks/useAuth.ts";
 import { AuthorInfo, AuthorInitialState } from "../types";
-import { data } from "react-router-dom";
+import LoadingSpinner from "../components/common/LoadingSpinner.tsx";
+import { getAuthorDetailsApi, updateAuthorApi } from "../apis/author.ts";
+import { addToast } from "@heroui/react";
+import AuthorForm from "../components/author/AuthorForm.tsx";
 
 const UpdateAuthor = () => {
   const { profile } = useAuth();
   const [busy, setBusy] = useState(true);
   const [authorInfo, setAuthorInfo] = useState<AuthorInitialState>();
 
-  const fetchAuthorInfo = async () => {
+  const fetchAuthorDetails = async () => {
     const response = await getAuthorDetailsApi(profile?.authorId);
 
     setBusy(false);
 
     if (!response.success) {
-      return toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
 
     setAuthorInfo(response.data);
   };
 
   useEffect(() => {
-    fetchAuthorInfo();
+    fetchAuthorDetails();
   }, []);
 
-  const handleSubmit = async (data: AuthorInfo) => {
-    const response = await updateAuthorApi(data);
+  const handleSubmit = async (formData: AuthorInfo) => {
+    const response = await updateAuthorApi(formData);
 
     if (!response.success) {
-      toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
 
-    if (response.success) {
-      toast.success(response.message, { duration: 3000 });
-    }
+    addToast({
+      color: "success",
+      title: "Success",
+      description: response.message,
+    });
   };
 
   if (busy) {
@@ -56,5 +61,4 @@ const UpdateAuthor = () => {
     />
   );
 };
-
 export default UpdateAuthor;

@@ -21,15 +21,15 @@ const authorSchema = new Schema<AuthorDoc>(
       required: true,
       trim: true,
     },
-    slug: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     about: {
       type: String,
       required: true,
       trim: true,
+    },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
     },
     socialLinks: [String],
     books: [
@@ -39,9 +39,9 @@ const authorSchema = new Schema<AuthorDoc>(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-const Author = model("Author", authorSchema);
+const AuthorModel = model("Author", authorSchema);
 
-export default Author as Model<AuthorDoc>;
+export default AuthorModel as Model<AuthorDoc>;

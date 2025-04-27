@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
+import { createContext, FC, ReactNode, useEffect, useState } from "react";
 import { CartItem, ICartContext } from "../types";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -6,10 +6,10 @@ import {
   updateCartId,
   updateCartItems,
   updateCartState,
-} from "../store/cartSlice";
-import useAuth from "../hooks/useAuth";
-import { clearCartApi, getCartApi, updateCartApi } from "../apis/cart";
-import toast from "react-hot-toast";
+} from "../redux/slices/cartSlice.ts";
+import useAuth from "../hooks/useAuth.ts";
+import { addToast } from "@heroui/react";
+import { clearCartApi, getCartApi, updateCartApi } from "../apis/cart.ts";
 
 interface Props {
   children: ReactNode;
@@ -34,10 +34,10 @@ const updateCartInLS = (items: CartItem[]) => {
 
 let startLSUpdate = false;
 
-const CartProvider = ({ children }: Props) => {
+const CartProvider: FC<Props> = ({ children }) => {
   const cart = useSelector(getCartState);
   const dispatch = useDispatch();
-  const { profile } = useAuth();
+  const { profile, status } = useAuth();
 
   const [pending, setPending] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -50,9 +50,18 @@ const CartProvider = ({ children }: Props) => {
       const response = await clearCartApi();
       setPending(false);
       if (!response.success) {
-        return toast.error(response.message);
+        return addToast({
+          color: "danger",
+          title: "Error",
+          description: response.message,
+        });
       }
-      toast.success(response.message);
+
+      addToast({
+        color: "success",
+        title: "Cleared",
+        description: response.message,
+      });
     }
   };
 
@@ -74,10 +83,18 @@ const CartProvider = ({ children }: Props) => {
       const response = await updateCartApi(formData);
       setPending(false);
       if (!response.success) {
-        return toast.error(response.message);
+        return addToast({
+          color: "danger",
+          title: "Error",
+          description: response.message,
+        });
       }
       dispatch(updateCartId(response.data.cart));
-      toast.success(response.message);
+      addToast({
+        color: "success",
+        title: "Updated",
+        description: response.message,
+      });
     }
   };
 
@@ -91,13 +108,18 @@ const CartProvider = ({ children }: Props) => {
     }
 
     const response = await getCartApi();
+
     setFetching(false);
     if (!response?.success) {
-      return toast.error(response?.message || "An error occurred");
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
 
     dispatch(
-      updateCartState({ id: response.data.id, items: response.data.items })
+      updateCartState({ id: response.data.id, items: response.data.items }),
     );
   };
 
@@ -109,7 +131,7 @@ const CartProvider = ({ children }: Props) => {
 
   useEffect(() => {
     fetchCartInfo();
-  }, []);
+  }, [status]);
 
   return (
     <CartContext.Provider
@@ -129,5 +151,4 @@ const CartProvider = ({ children }: Props) => {
     </CartContext.Provider>
   );
 };
-
 export default CartProvider;

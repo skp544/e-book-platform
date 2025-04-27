@@ -1,24 +1,28 @@
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
+import { IBookByGenre } from "../../types";
+import { addToast } from "@heroui/react";
 import { recommendedBooksApi } from "../../apis/book.ts";
-import toast from "react-hot-toast";
 import Skeletons from "../skeletons";
 import BookList from "./BookList.tsx";
-import { IBookByGenre } from "../../types";
 
 interface Props {
   id?: string;
 }
-
-const RecommendedSection = ({ id }: Props) => {
+const RecommendedSection: FC<Props> = ({ id }) => {
   const [fetching, setFetching] = useState(true);
   const [books, setBooks] = useState<IBookByGenre[]>([]);
+
   const fetchBooks = async () => {
     if (!id) return;
     const response = await recommendedBooksApi(id);
     setFetching(false);
 
     if (!response.success) {
-      return toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
 
     setBooks(response.data);
@@ -35,11 +39,11 @@ const RecommendedSection = ({ id }: Props) => {
   if (fetching) {
     return <Skeletons.BookList />;
   }
+
   return (
     <div>
       <BookList data={books} title="Books related to this book" />
     </div>
   );
 };
-
 export default RecommendedSection;

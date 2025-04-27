@@ -1,34 +1,39 @@
-import {model, ObjectId, Schema} from "mongoose";
+import { Model, model, ObjectId, Schema } from "mongoose";
 
-interface  CartItem {
-product: ObjectId
-    quantity: number
+interface CartItem {
+  product: ObjectId;
+  quantity: number;
 }
 
-interface  CartDoc {
-    userId: ObjectId,
-    items: CartItem[]
+interface CartDoc {
+  userId: ObjectId;
+  items: CartItem[];
 }
 
-const cartSchema = new Schema<CartDoc>({
+const cartSchema = new Schema<CartDoc>(
+  {
     userId: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    items: [{
+    items: [
+      {
         product: {
-            type: Schema.Types.ObjectId,
-            ref: "Book",
-            required: true
+          type: Schema.Types.ObjectId,
+          ref: "Book",
+          required: true,
         },
         quantity: {
-            type: Number,
-            default:1
-        }
-    }]
-}, {timestamps: true})
+          type: Number,
+          default: 1,
+        },
+      },
+    ],
+  },
+  { timestamps: true },
+);
 
-const Cart = model<CartDoc>("Cart", cartSchema)
+const CartModel = model<CartDoc>("Cart", cartSchema);
 
-export  default  Cart;
+export default CartModel as Model<CartDoc>;

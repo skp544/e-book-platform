@@ -1,10 +1,12 @@
-import { ErrorRequestHandler } from "express";
-import { JsonWebTokenError } from "jsonwebtoken";
+import { ErrorRequestHandler, Request, Response, NextFunction } from "express";
 
-export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
-  console.log(error);
-  if (error instanceof JsonWebTokenError) {
-    res.status(401).json({ success: false, message: error.message });
-  }
+const errorHandler: ErrorRequestHandler = (
+  error,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   res.status(500).json({ success: false, message: error.message });
 };
+
+export default errorHandler;

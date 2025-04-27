@@ -1,3 +1,11 @@
+import { Router } from "express";
+import { isAuth, isAuthor } from "@/middlewares/auth-middleware";
+import { fileParser } from "@/middlewares/file-middleware";
+import {
+  newBookSchema,
+  updateBookSchema,
+  validate,
+} from "@/middlewares/validator";
 import {
   createNewBook,
   generateBookAccessUrl,
@@ -9,18 +17,6 @@ import {
   getRecommendedBooks,
   updateBook,
 } from "@/controllers/book-controller";
-import {
-  isAuth,
-  isAuthor,
-  isPurchasedByTheUser,
-} from "@/middlewares/auth-middleware";
-import { fileParser } from "@/middlewares/file-middleware";
-import {
-  newBookSchema,
-  updateBookSchema,
-  validate,
-} from "@/middlewares/validate-middleware";
-import { Router } from "express";
 
 const router = Router();
 
@@ -30,16 +26,16 @@ router.post(
   isAuthor,
   fileParser,
   validate(newBookSchema),
-  createNewBook
+  createNewBook,
 );
 
 router.patch(
-  "/",
+  "/update",
   isAuth,
   isAuthor,
   fileParser,
   validate(updateBookSchema),
-  updateBook
+  updateBook,
 );
 
 router.get("/list", isAuth, getAllPurchasedBooks);

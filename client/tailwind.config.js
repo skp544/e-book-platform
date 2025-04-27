@@ -1,21 +1,14 @@
+import { heroui } from "@heroui/react";
+
 /** @type {import('tailwindcss').Config} */
-const { nextui } = require("@nextui-org/react");
 export default {
-  darkMode: "class",
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {
-      backgroundColor: {
-        "book-dark": "#2b2b2b",
-      },
-      color: {
-        "book-dark": "f8f8ea",
-      },
-    },
+    extend: {},
   },
-  plugins: [nextui()],
+  plugins: [heroui()],
 };

@@ -1,21 +1,19 @@
-import { RequestHandler, Response, Request } from "express";
-import { sendErrorResponse } from "@/utils/helper";
+import { RequestHandler } from "express";
+import { handleError } from "@/utils/helper";
 import stripe from "@/stripe";
 import {
   StripeCustomer,
   StripeFailedIntent,
   StripeSuccessIntent,
-} from "@/stripe/stripe";
-import Order from "@/models/order-model";
-import User from "@/models/user-model";
-import Cart from "@/models/cart-model";
+} from "@/types/stripe";
+import OrderModel from "@/models/order-model";
+import UserModel from "@/models/user-model";
+import CartModel from "@/models/cart-model";
 
-export const handlePayment: RequestHandler = async (
-  req: Request,
-  res: Response
-) => {
+export const handlePayment: RequestHandler = async (req, res) => {
   try {
     const sig = req.headers["stripe-signature"];
+
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
     let event;
@@ -33,11 +31,12 @@ export const handlePayment: RequestHandler = async (
       const customerId = stripeSession.customer;
 
       const customer = (await stripe.customers.retrieve(
-        customerId
+        customerId,
       )) as unknown as StripeCustomer;
+
       const { orderId, type, userId } = customer.metadata;
 
-      const order = await Order.findByIdAndUpdate(orderId, {
+      const order = await OrderModel.findByIdAndUpdate(orderId, {
         stripeCustomerId: customerId,
         paymentId: stripeSession.id,
         totalAmount: stripeSession.amount_received,
@@ -51,24 +50,16 @@ export const handlePayment: RequestHandler = async (
         }) || [];
 
       if (succeed && order) {
-        await User.findByIdAndUpdate(userId, {
+        await UserModel.findByIdAndUpdate(userId, {
           $push: { books: { $each: bookIds }, orders: { $each: [order._id] } },
         });
 
         if (type === "checkout") {
-        await Cart.findOneAndUpdate({ userId }, { items: [] });
+          await CartModel.findOneAndUpdate({ userId }, { items: [] });
         }
-
       }
     }
-  } catch (error) {
-    console.log(error);
-    return sendErrorResponse({
-      res,
-      status: 400,
-      message: "Could not complete payment!",
-    });
+  } catch (e) {
+    handleError(e, res);
   }
-
-  res.send();
 };

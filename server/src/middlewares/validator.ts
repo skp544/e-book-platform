@@ -1,12 +1,11 @@
-import { Request, Response, NextFunction, RequestHandler } from "express";
-import { z, ZodObject, ZodRawShape } from "zod";
+import { z, ZodObject, ZodRawShape, ZodType } from "zod";
+import { RequestHandler, Response, Request, NextFunction } from "express";
 import { isValidObjectId } from "mongoose";
 
 export const validate = <T extends ZodRawShape>(
-  schema: ZodObject<T>
+  schema: ZodObject<T>,
 ): RequestHandler => {
   return (req: Request, res: Response, next: NextFunction) => {
-    // const schema = z.object(obj);
     const result = schema.safeParse(req.body);
 
     if (result.success) {
@@ -14,28 +13,27 @@ export const validate = <T extends ZodRawShape>(
       next();
     } else {
       const errors = result.error.flatten().fieldErrors;
-      res.status(422).json({ success: false, errors });
+      res.status(422).json({ errors });
     }
   };
 };
 
-// VALIDATORS
 export const emailValidationSchema = z.object({
   email: z
     .string({
-      required_error: "Email is missing",
-      invalid_type_error: "Invalid email type",
+      required_error: "Email is missing!",
+      invalid_type_error: "Invalid email type!",
     })
-    .email("Invalid email"),
+    .email("Invalid email address!"),
 });
 
 export const newUserSchema = z.object({
   name: z
     .string({
-      required_error: "Name is missing",
-      invalid_type_error: "Invalid name",
+      required_error: "Name is missing!",
+      invalid_type_error: "Invalid name type!",
     })
-    .min(3, "Name must be 3 characters long!")
+    .min(3, "Name must be at least 3 characters long!")
     .trim(),
 });
 
@@ -61,7 +59,7 @@ export const newAuthorSchema = z.object({
 
 export const commonBookSchema = {
   uploadMethod: z.enum(["aws", "local"], {
-    required_error: "Please define a valid upload method",
+    required_error: "Please define a valid upload method!",
     message: "Invalid upload method needs to be either aws or local",
   }),
   title: z
@@ -83,8 +81,8 @@ export const commonBookSchema = {
     })
     .trim(),
   publishedAt: z.coerce.date({
-    required_error: "Publish date is missing",
-    invalid_type_error: "Invalid publish date",
+    required_error: "Published date is missing",
+    invalid_type_error: "Invalid published date",
   }),
   publicationName: z
     .string({
@@ -101,13 +99,13 @@ export const commonBookSchema = {
   price: z
     .string({
       required_error: "Price is missing",
-      invalid_type_error: "Invalid price",
+      invalid_type_error: "Invalid  Price",
     })
     .transform((value, ctx) => {
       try {
         return JSON.parse(value);
-      } catch (error) {
-        ctx.addIssue({ code: "custom", message: "Invalid Price Data" });
+      } catch (e) {
+        ctx.addIssue({ code: "custom", message: "Invalid  price data" });
         return z.NEVER;
       }
     })
@@ -125,15 +123,15 @@ export const commonBookSchema = {
             invalid_type_error: "Invalid Sale price",
           })
           .nonnegative("Invalid sale price!"),
-      })
+      }),
     )
     .refine(
-      (price) => price.sale < price.mrp,
-      "Sale price should be less than MRP!"
+      (price) => price.sale <= price.mrp,
+      "Sale price should be less than mrp!",
     ),
 };
 
-export const fileInfo = z
+const fileInfo = z
   .string({
     required_error: "File info is missing",
     invalid_type_error: "Invalid file info",
@@ -141,8 +139,8 @@ export const fileInfo = z
   .transform((value, ctx) => {
     try {
       return JSON.parse(value);
-    } catch (error) {
-      ctx.addIssue({ code: "custom", message: "Invalid File Info" });
+    } catch (e) {
+      ctx.addIssue({ code: "custom", message: "Invalid  file info" });
       return z.NEVER;
     }
   })
@@ -156,17 +154,17 @@ export const fileInfo = z
         .trim(),
       type: z
         .string({
-          required_error: "fileInfo.type is missing!",
-          invalid_type_error: "Invalid fileInfo.type!",
+          required_error: "fileInfo.type is missing",
+          invalid_type_error: "Invalid fileInfo.type",
         })
         .trim(),
       size: z
         .number({
           required_error: "fileInfo.size is missing",
-          invalid_type_error: "Invalid fileInfo.size price",
+          invalid_type_error: "Invalid fileInfo.size",
         })
-        .nonnegative("Invalid fileInfo.size price!"),
-    })
+        .nonnegative("Invalid fileInfo.size!"),
+    }),
   );
 
 export const newBookSchema = z.object({
@@ -176,41 +174,36 @@ export const newBookSchema = z.object({
 
 export const updateBookSchema = z.object({
   ...commonBookSchema,
-  slug: z
-    .string({
-      message: "Invalid Slug!",
-    })
-    .trim(),
+  slug: z.string({
+    message: "Invalid slug!",
+  }),
   fileInfo: fileInfo.optional(),
 });
 
 export const newReviewSchema = z.object({
   rating: z
     .number({
-      required_error: "Rating is missing!",
-      invalid_type_error: "Invalid rating!",
+      required_error: "Rating is missing",
+      invalid_type_error: "Invalid rating",
     })
-    .nonnegative("Rating must be within 1 to 5.")
-    .min(1, "Minimum rating should be 1")
-    .max(5, "Maximum rating should be 5"),
+    .nonnegative("Rating must be within 1 to 5")
+    .min(1, "Minimum rating should be  1")
+    .max(5, "Maximum rating should be  5"),
   content: z
     .string({
-      invalid_type_error: "Invalid rating!",
+      invalid_type_error: "Invalid content is missing",
     })
     .optional(),
   bookId: z
     .string({
-      required_error: "Book id is missing!",
-      invalid_type_error: "Invalid book id!",
+      required_error: "Book id is missing",
+      invalid_type_error: "Invalid book id",
     })
     .transform((arg, ctx) => {
-      console.log("arg", arg);
-      console.log("arg", !isValidObjectId(arg));
       if (!isValidObjectId(arg)) {
         ctx.addIssue({ code: "custom", message: "Invalid book id!" });
         return z.NEVER;
       }
-      console.log(arg, "ssss");
       return arg;
     }),
 });
@@ -253,7 +246,7 @@ export const historyValidationSchema = z.object({
             invalid_type_error: "Invalid Highlight fill!",
           })
           .trim(),
-      })
+      }),
     )
     .optional(),
   remove: z.boolean({
@@ -282,6 +275,6 @@ export const cartItemsSchema = z.object({
         required_error: "Quantity is missing!",
         invalid_type_error: "Quantity must be number!",
       }),
-    })
+    }),
   ),
 });

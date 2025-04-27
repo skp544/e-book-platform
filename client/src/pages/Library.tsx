@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { getAllPurchasedBooksApi } from "../apis/book.ts";
-import toast from "react-hot-toast";
 import { ILibraryBook } from "../types";
+import { getAllPurchasedBooksApi } from "../apis/book.ts";
+import { addToast, Button } from "@heroui/react";
 import { Link } from "react-router-dom";
-import { Button } from "@nextui-org/react";
 
 const Library = () => {
   const [fetching, setFetching] = useState(true);
@@ -14,7 +13,11 @@ const Library = () => {
     setFetching(false);
 
     if (!response.success) {
-      return toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
 
     setBooks(response.data);
@@ -26,14 +29,14 @@ const Library = () => {
 
   if (fetching)
     return (
-      <div className="text-center pt-10 animate-pulse">
+      <div className="animate-pulse pt-10 text-center">
         <p>Loading...</p>
       </div>
     );
 
   if (!books.length)
     return (
-      <div className="text-center pt-10 font-bold text-3xl opacity-60">
+      <div className="pt-10 text-center text-3xl font-bold opacity-60">
         <p>Oops, your library looks empty!</p>
       </div>
     );
@@ -45,7 +48,7 @@ const Library = () => {
           <div className="flex" key={book.id}>
             <img src={book.cover} alt={book.title} className="w-36 rounded" />
 
-            <div className="p-5 space-y-3">
+            <div className="space-y-3 p-5">
               <h1 className="line-clamp-1 text-xl font-semibold">
                 {book.title}
               </h1>
@@ -76,5 +79,4 @@ const Library = () => {
     </div>
   );
 };
-
 export default Library;

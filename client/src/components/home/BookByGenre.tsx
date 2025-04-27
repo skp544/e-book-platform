@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import { booksByGenreApi } from "../../apis/book.ts";
+import { FC, useEffect, useState } from "react";
 import { IBookByGenre } from "../../types";
+import { booksByGenreApi } from "../../apis/book.ts";
+import { addToast } from "@heroui/react";
 import Skeletons from "../skeletons";
-import toast from "react-hot-toast";
-import BookList from "./BookList.tsx";
+import BookList from "../book/BookList.tsx";
 
 interface Props {
   genre: string;
 }
 
-const BookByGenre = ({ genre }: Props) => {
+const BookByGenre: FC<Props> = ({ genre }) => {
   const [books, setBooks] = useState<IBookByGenre[]>([]);
   const [busy, setBusy] = useState(true);
 
@@ -17,7 +17,11 @@ const BookByGenre = ({ genre }: Props) => {
     const response = await booksByGenreApi(genre);
 
     if (!response.success) {
-      return toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
 
     setBusy(false);
@@ -34,5 +38,4 @@ const BookByGenre = ({ genre }: Props) => {
 
   return <BookList title={genre} data={books} />;
 };
-
 export default BookByGenre;

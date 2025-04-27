@@ -1,9 +1,9 @@
-import { updateProfileApi } from "../apis/auth.ts";
-import toast from "react-hot-toast";
 import NewUserForm from "../components/profile/NewUserForm.tsx";
-import useAuth from "../hooks/useAuth.ts";
 import { useDispatch } from "react-redux";
-import { updateProfile } from "../store/authSlice.ts";
+import useAuth from "../hooks/useAuth.ts";
+import { updateProfileApi } from "../apis/auth.ts";
+import { addToast } from "@heroui/react";
+import { updateProfile } from "../redux/slices/authSlice.ts";
 
 const UpdateProfile = () => {
   const { profile } = useAuth();
@@ -13,11 +13,19 @@ const UpdateProfile = () => {
     const response = await updateProfileApi(formData);
 
     if (!response.success) {
-      toast.error(response.message);
+      addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
       return;
     }
     dispatch(updateProfile(response.data));
-    toast.success(response.message);
+    addToast({
+      color: "success",
+      title: "Updated",
+      description: response.message,
+    });
   };
 
   return (
@@ -30,5 +38,4 @@ const UpdateProfile = () => {
     />
   );
 };
-
 export default UpdateProfile;

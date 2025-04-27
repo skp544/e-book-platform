@@ -1,9 +1,9 @@
-import { Skeleton } from "@nextui-org/react";
+import { Skeleton } from "@heroui/react";
 
 const HeroSection = () => {
   return (
-    <div className="md:h-96 overflow-hidden rounded-md  bg-default-100  animate-pulse bg-gradient-to-r from-transparent">
-      <Skeleton className="w-full h-full" />
+    <div className="animate-pulse overflow-hidden rounded-md bg-default-100 bg-gradient-to-r from-transparent md:h-96">
+      <Skeleton className="h-full w-full" />
     </div>
   );
 };

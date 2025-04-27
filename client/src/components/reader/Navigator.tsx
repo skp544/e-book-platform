@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { ReactNode } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import clsx from "clsx";

@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem } from "@nextui-org/react";
+import { Accordion, AccordionItem } from "@heroui/react";
 import { FC } from "react";
 
 type BookNavItem = { title: string; href: string };
@@ -17,7 +17,7 @@ const TableOfContent: FC<Props> = ({ visible, data, onClick }) => {
   return (
     <div
       style={{ right: visible ? "0" : "-100%" }}
-      className="dark:bg-book-dark dark:text-book-dark transition-all md:w-96 w-3/4 bg-white h-screen overflow-y-scroll fixed z-50 top-0 right-0 flex flex-col space-y-3 p-3 shadow-md"
+      className="dark:bg-book-dark dark:text-book-dark fixed right-0 top-0 z-50 flex h-screen w-3/4 flex-col space-y-3 overflow-y-scroll bg-white p-3 shadow-md transition-all md:w-96"
     >
       {data.map(({ label, subItems }) => {
         if (!subItems.length)
@@ -25,7 +25,7 @@ const TableOfContent: FC<Props> = ({ visible, data, onClick }) => {
             <div key={label.title}>
               <p
                 onClick={() => onClick(label.href)}
-                className="py-2 text-large hover:underline cursor-pointer"
+                className="cursor-pointer py-2 text-large hover:underline"
               >
                 {label.title}
               </p>
@@ -41,7 +41,7 @@ const TableOfContent: FC<Props> = ({ visible, data, onClick }) => {
                     <p
                       key={item.title}
                       onClick={() => onClick(item.href)}
-                      className="pl-6 text-large hover:underline cursor-pointer"
+                      className="cursor-pointer pl-6 text-large hover:underline"
                     >
                       {item.title}
                     </p>

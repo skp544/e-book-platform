@@ -1,13 +1,14 @@
-import { catchError } from "../helper";
 import { AuthorInfo } from "../types";
-import client from "./client";
+import { catchError } from "../helpers";
+import client from "./client.ts";
 
-export const registerAuthorApi = async (data: AuthorInfo) => {
+export const registerAuthorApi = async (formData: AuthorInfo) => {
   try {
-    const response = await client.post("/author/register", data);
-    return response.data;
-  } catch (error) {
-    return catchError(error);
+    const { data } = await client.post("/author/register", formData);
+
+    return data;
+  } catch (e) {
+    return catchError(e);
   }
 };
 
@@ -20,10 +21,11 @@ export const getAuthorDetailsApi = async (id: string | undefined) => {
   }
 };
 
-export const updateAuthorApi = async (data: AuthorInfo) => {
+export const updateAuthorApi = async (formData: AuthorInfo) => {
   try {
-    const response = await client.patch("/author", data);
-    return response.data;
+    const { data } = await client.patch("/author/update", formData);
+
+    return data;
   } catch (error) {
     return catchError(error);
   }

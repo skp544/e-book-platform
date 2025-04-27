@@ -1,23 +1,30 @@
+import { addToast } from "@heroui/react";
 import { updateProfileApi } from "../apis/auth.ts";
-import toast from "react-hot-toast";
-import NewUserForm from "../components/profile/NewUserForm.tsx";
 import { Navigate, useNavigate } from "react-router-dom";
+import NewUserForm from "../components/profile/NewUserForm.tsx";
 import useAuth from "../hooks/useAuth.ts";
 
-function NewUser() {
-  const { profile } = useAuth();
+const NewUser = () => {
+  const { profile, updateProfileInfo } = useAuth();
 
   const navigate = useNavigate();
   const handleSubmit = async (formData: FormData) => {
     const response = await updateProfileApi(formData);
 
     if (!response.success) {
-      toast.error(response.message);
-      return;
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
-
+    await updateProfileInfo();
     navigate("/");
-    toast.success(response.message);
+    addToast({
+      color: "success",
+      title: "Welcome!!",
+      description: response.message,
+    });
   };
 
   if (profile?.signedUp) {
@@ -31,6 +38,5 @@ function NewUser() {
       btnTitle={"Sign Me Up"}
     />
   );
-}
-
+};
 export default NewUser;

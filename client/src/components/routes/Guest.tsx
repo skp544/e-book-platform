@@ -1,10 +1,9 @@
 import useAuth from "../../hooks/useAuth.ts";
-import { Navigate, Outlet } from "react-router-dom";
 import LoadingSpinner from "../common/LoadingSpinner.tsx";
+import { Navigate, Outlet } from "react-router-dom";
 
 const Guest = () => {
   const { status } = useAuth();
-  const isLoggedIn = status === "authenticated";
 
   const busy = status === "busy";
 
@@ -12,7 +11,10 @@ const Guest = () => {
     return <LoadingSpinner verify={true} />;
   }
 
+  const isLoggedIn = status === "authenticated";
+
+  console.log(isLoggedIn, "isLoggedIn");
+
   return !isLoggedIn ? <Navigate to={"/sign-up"} /> : <Outlet />;
 };
-
 export default Guest;

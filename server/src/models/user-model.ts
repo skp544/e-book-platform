@@ -1,15 +1,15 @@
-import { ObjectId, model, Schema } from "mongoose";
+import { model, Schema, ObjectId } from "mongoose";
 
 export interface UserDoc {
   _id: ObjectId;
-  name?: string;
+  name: string;
   email: string;
   role: "user" | "author";
   signedUp: boolean;
   avatar?: { url: string; id: string };
-  authorId?: ObjectId;
-  books: ObjectId[]
-  orders?: ObjectId[]
+  authorId: ObjectId;
+  books: ObjectId[];
+  orders: ObjectId[];
 }
 
 const userSchema = new Schema<UserDoc>({
@@ -20,8 +20,8 @@ const userSchema = new Schema<UserDoc>({
   email: {
     type: String,
     trim: true,
-    unique: true,
     required: true,
+    unique: true,
   },
   role: {
     type: String,
@@ -34,8 +34,14 @@ const userSchema = new Schema<UserDoc>({
   },
   avatar: {
     type: Object,
-    url: String,
-    id: String,
+    url: {
+      type: String,
+      trim: true,
+    },
+    id: {
+      type: String,
+      trim: true,
+    },
   },
   authorId: {
     type: Schema.Types.ObjectId,
@@ -43,18 +49,18 @@ const userSchema = new Schema<UserDoc>({
   },
   books: [
     {
-        type: Schema.ObjectId,
-        ref: "Book"
-    }
+      type: Schema.ObjectId,
+      ref: "Book",
+    },
   ],
   orders: [
     {
-        type: Schema.ObjectId,
-        ref: "Order"
-    }
-  ]
+      type: Schema.ObjectId,
+      ref: "Order",
+    },
+  ],
 });
 
-const User = model("User", userSchema);
+const UserModel = model("User", userSchema);
 
-export default User;
+export default UserModel;

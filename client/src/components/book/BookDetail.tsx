@@ -1,27 +1,26 @@
-import { Link } from "react-router-dom";
 import { IBookPublicDetails } from "../../types";
-import { calculateDiscount, formatPrice } from "../../helper";
-import { Button, Chip, Divider } from "@nextui-org/react";
+import { FC, useState } from "react";
+import useAuth from "../../hooks/useAuth.ts";
+import { Link } from "react-router-dom";
+import { calculateDiscount, formatPrice } from "../../helpers";
+import { addToast, Button, Chip, Divider } from "@heroui/react";
+import { FaStar } from "react-icons/fa";
+import RichEditor from "../rich-editor";
 import {
   FaEarthAfrica,
   FaMasksTheater,
   FaRegCalendarDays,
   FaRegFileLines,
-  FaStar,
 } from "react-icons/fa6";
 import { TbShoppingCartPlus } from "react-icons/tb";
-import RichEditor from "../rich-editor";
-import useCart from "../../hooks/useCart";
+import useCart from "../../hooks/useCart.ts";
 import { instantCheckoutApi } from "../../apis/checkout.ts";
-import toast from "react-hot-toast";
-import { useState } from "react";
-import useAuth from "../../hooks/useAuth.ts";
 
 interface Props {
   book?: IBookPublicDetails;
 }
 
-const BookDetail = ({ book }: Props) => {
+const BookDetail: FC<Props> = ({ book }) => {
   const { updateCart, pending } = useCart();
   const { profile } = useAuth();
   const [busy, setBusy] = useState(false);
@@ -48,17 +47,17 @@ const BookDetail = ({ book }: Props) => {
 
   const alreadyPurchased = profile?.books?.includes(id) || false;
 
-  const handleCartUpdate = () => {
-    updateCart({ product: book, quantity: 1 });
-  };
-
   const handleBuyNow = async () => {
     setBusy(true);
     const response = await instantCheckoutApi({ productId: id });
     setBusy(false);
 
     if (!response.success) {
-      return toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
 
     if (response.checkoutUrl) {
@@ -66,18 +65,21 @@ const BookDetail = ({ book }: Props) => {
     }
   };
 
+  const handleCartUpdate = () => {
+    updateCart({ product: book, quantity: 1 });
+  };
+
   return (
-    <div className="md:flex">
+    <div className={"md:flex"}>
       <div className="">
         <img
           src={cover}
-          className="w-48 h-80 rounded-md object-cover"
+          className="h-80 w-48 rounded-md object-cover"
           alt={title}
         />
       </div>
-
-      <div className="pl-0 md:pl-10 flex-1 pt-6">
-        <h1 className="sm:text-3xl text-2xl font-semibold">{title}</h1>
+      <div className="flex-1 pl-0 pt-6 md:pl-10">
+        <h1 className="text-2xl font-semibold sm:text-3xl">{title}</h1>
         <div>
           <Link
             className="font-semibold hover:underline"
@@ -91,7 +93,7 @@ const BookDetail = ({ book }: Props) => {
 
         <div className="mt-3 flex items-center space-x-2">
           <p className="font-semibold">{formatPrice(Number(price.sale))}</p>
-          <p className="line-through italic">
+          <p className="italic line-through">
             {formatPrice(Number(price.mrp))}
           </p>
           <Chip color="danger">{`${calculateDiscount(price)}% Off`}</Chip>
@@ -100,7 +102,7 @@ const BookDetail = ({ book }: Props) => {
         <div className="mt-3 flex items-center space-x-2 font-semibold">
           {rating ? (
             <Chip color="danger">
-              <div className="flex space-x-1 items-center">
+              <div className="flex items-center space-x-1">
                 <span>{rating}</span>
                 <FaStar />
               </div>
@@ -113,7 +115,7 @@ const BookDetail = ({ book }: Props) => {
 
           <Link
             to={`/rate/${id}`}
-            className="font-normal text-sm hover:underline"
+            className="text-sm font-normal hover:underline"
           >
             Add a Review
           </Link>
@@ -123,24 +125,24 @@ const BookDetail = ({ book }: Props) => {
           <RichEditor className="regular" value={description} />
         </div>
 
-        <div className="flex items-center space-x-6 mt-6 h-10">
+        <div className="mt-6 flex h-10 items-center space-x-6">
           <div className="flex flex-col items-center justify-center space-y-1">
-            <FaEarthAfrica className="sm:text-2xl text-xl" />
-            <span className="sm:text-xs text-[10px] truncate">{language}</span>
+            <FaEarthAfrica className="text-xl sm:text-2xl" />
+            <span className="truncate text-[10px] sm:text-xs">{language}</span>
           </div>
 
           <Divider orientation="vertical" className="h-1/2" />
 
           <div className="flex flex-col items-center justify-center space-y-1">
-            <FaMasksTheater className="sm:text-2xl text-xl" />
-            <span className="sm:text-xs text-[10px] truncate">{genre}</span>
+            <FaMasksTheater className="text-xl sm:text-2xl" />
+            <span className="truncate text-[10px] sm:text-xs">{genre}</span>
           </div>
 
           <Divider orientation="vertical" className="h-1/2" />
 
           <div className="flex flex-col items-center justify-center space-y-1">
-            <FaRegFileLines className="sm:text-2xl text-xl" />
-            <span className="sm:text-xs text-[10px] truncate">
+            <FaRegFileLines className="text-xl sm:text-2xl" />
+            <span className="truncate text-[10px] sm:text-xs">
               {fileInfo.size}
             </span>
           </div>
@@ -148,14 +150,13 @@ const BookDetail = ({ book }: Props) => {
           <Divider orientation="vertical" className="h-1/2" />
 
           <div className="flex flex-col items-center justify-center space-y-1">
-            <FaRegCalendarDays className="sm:text-2xl text-xl" />
-            <span className="sm:text-xs text-[10px] truncate">
+            <FaRegCalendarDays className="text-xl sm:text-2xl" />
+            <span className="truncate text-[10px] sm:text-xs">
               {publishedAt}
             </span>
           </div>
         </div>
-
-        <div className="flex items-center mt-6 space-x-3">
+        <div className="mt-6 flex items-center space-x-3">
           {alreadyPurchased ? (
             <Button
               radius="sm"
@@ -190,5 +191,4 @@ const BookDetail = ({ book }: Props) => {
     </div>
   );
 };
-
 export default BookDetail;

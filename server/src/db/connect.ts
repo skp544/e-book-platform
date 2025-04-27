@@ -1,3 +1,3 @@
-import { connectDB } from ".";
+import { dbConnect } from "@/db/index";
 
-connectDB();
+dbConnect();

@@ -1,6 +1,6 @@
-import Navbar from "./Navbar.tsx";
 import { FC, ReactNode } from "react";
 import { useLocation } from "react-router-dom";
+import Navbar from "./Navbar.tsx";
 
 interface Props {
   children: ReactNode;
@@ -14,11 +14,10 @@ const Container: FC<Props> = ({ children }) => {
     return children;
   }
   return (
-    <div className={"min-h-screen max-w-5xl mx-auto  flex flex-col "}>
+    <div className={"mx-auto flex min-h-screen max-w-5xl flex-col"}>
       <Navbar />
-      <div className={"flex-1 flex flex-col"}>{children}</div>
+      <div className={"flex flex-1 flex-col"}>{children}</div>
     </div>
   );
 };
-
 export default Container;

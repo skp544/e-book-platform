@@ -1,23 +1,28 @@
 import {
-  Autocomplete,
-  AutocompleteItem,
-  Button,
-  DatePicker,
-  Input,
-} from "@nextui-org/react";
-import { genres, languages } from "../../helper/data.ts";
-import PosterSelector from "./PosterSelector.tsx";
-import RichEditor from "../rich-editor";
+  ChangeEventHandler,
+  FC,
+  FormEventHandler,
+  useEffect,
+  useState,
+} from "react";
 import {
   BookDefaultForm,
   BookToSubmit,
   InitialBookToUpdate,
 } from "../../types";
-import { ChangeEventHandler, useEffect, useState } from "react";
+import ErrorList from "../common/ErrorList.tsx";
+import PosterSelector from "./PosterSelector.tsx";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  Button,
+  DatePicker,
+  Input,
+} from "@heroui/react";
+import RichEditor from "../rich-editor";
+import { genres, languages } from "../../helpers/data.ts";
 import { parseDate } from "@internationalized/date";
 import { newBookSchema, updateBookSchema } from "../../schemas";
-import ErrorList from "../common/ErrorList.tsx";
-import clsx from "clsx";
 
 interface Props {
   title: string;
@@ -36,7 +41,12 @@ const defaultBookInfo = {
   publicationName: "",
 };
 
-const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
+const BookForm: FC<Props> = ({
+  title,
+  submitBtnTitle,
+  initialState,
+  onSubmit,
+}) => {
   const [bookInfo, setBookInfo] = useState<BookDefaultForm>({
     ...defaultBookInfo,
   });
@@ -67,6 +77,7 @@ const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
     if (name === "cover" && file?.size) {
       try {
         setCover(URL.createObjectURL(file));
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         setCover("");
       }
@@ -215,6 +226,7 @@ const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
     }
 
     const result = updateBookSchema.safeParse(bookToSend);
+
     if (!result.success) {
       return setErrors(result.error.flatten().fieldErrors);
     }
@@ -240,7 +252,7 @@ const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
     setBusy(false);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     if (isForUpdate) {
@@ -281,15 +293,11 @@ const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
   }, [initialState]);
 
   return (
-    <form className={"p-10 space-y-6"}>
-      <h1 className={"pb-6 font-semibold text-2xl w-full"}>{title}</h1>
-
-      <div>
-        <label
-          htmlFor={"file"}
-          className={clsx(errors?.file && "text-red-400")}
-        >
-          <span className={""}>Select File:</span>
+    <form className={"space-y-6 p-10"} onSubmit={handleSubmit}>
+      <h1 className={"w-full pb-6 text-2xl font-semibold"}>{title}</h1>
+      <div className={""}>
+        <label className={""} htmlFor={"file"}>
+          <span className={""}>Select File: </span>
           <input
             accept={"application/epub+zip"}
             type={"file"}
@@ -301,7 +309,8 @@ const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
         <ErrorList errors={errors?.file} />
       </div>
 
-      {/* Poster Selector */}
+      {/*  Poster Selection */}
+
       <PosterSelector
         name={"cover"}
         src={cover}
@@ -323,15 +332,17 @@ const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
         errorMessage={<ErrorList errors={errors?.title} />}
       />
 
-      {/* About For Book */}
+      {/*  About of books */}
       <RichEditor
+        placeholder={"About book..."}
         isInvalid={!!errors?.description}
         errorMessage={<ErrorList errors={errors?.description} />}
-        placeholder={"About book..."}
         editable
         value={bookInfo.description}
         onChange={(description) => setBookInfo({ ...bookInfo, description })}
       />
+
+      {/*  description */}
 
       <Input
         type={"text"}
@@ -345,6 +356,7 @@ const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
         errorMessage={<ErrorList errors={errors?.publicationName} />}
       />
 
+      {/*  date picker */}
       <DatePicker
         label={"Publish Date"}
         onChange={(date) => {
@@ -357,6 +369,7 @@ const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
         errorMessage={<ErrorList errors={errors?.publishedAt} />}
       />
 
+      {/*language*/}
       <Autocomplete
         label={"Language"}
         placeholder={"Select Language"}
@@ -378,12 +391,12 @@ const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
         })}
       </Autocomplete>
 
-      {/* Genres */}
+      {/*  genres */}
       <Autocomplete
-        isInvalid={!!errors?.genre}
-        errorMessage={<ErrorList errors={errors?.genre} />}
         label={"Genre"}
         placeholder={"Select a Genre"}
+        isInvalid={!!errors?.genre}
+        errorMessage={<ErrorList errors={errors?.genre} />}
         defaultSelectedKey={bookInfo.genre}
         selectedKey={bookInfo.genre}
         isRequired
@@ -400,41 +413,39 @@ const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
         })}
       </Autocomplete>
 
-      {/* Price Sectiom */}
+      {/*  Price section */}
       <div>
-        <div className={"bg-default-100 rounded-md py-2 px-3"}>
-          <p className={clsx("text-xs pl-3", errors?.price && "text-red-400")}>
-            Price*
-          </p>
-
-          <div className={"flex space-x-6 mt-2"}>
+        <div className={"rounded-md bg-default-100 px-3 py-2"}>
+          <p>Price*</p>
+          <div className={"mt-2 flex space-x-6"}>
             <Input
               type={"number"}
               name={"mrp"}
+              label={"MRP"}
               placeholder={"0.00"}
               isRequired
               onChange={handleTextChange}
               value={bookInfo.mrp}
-              label={"MRP"}
               isInvalid={!!errors?.price}
               startContent={
                 <div className={"pointer-events-none flex items-center"}>
-                  <span className={"text-default-400 text-sm"}>$</span>
+                  <span className={"text-sm text-default-400"}>$</span>
                 </div>
               }
             />
+
             <Input
               type={"number"}
               name={"sale"}
               placeholder={"0.00"}
-              onChange={handleTextChange}
               isRequired
               label={"Sale Price"}
+              onChange={handleTextChange}
               value={bookInfo.sale}
               isInvalid={!!errors?.price}
               startContent={
                 <div className={"pointer-events-none flex items-center"}>
-                  <span className={"text-default-400 text-sm"}>$</span>
+                  <span className={"text-sm text-default-400"}>$</span>
                 </div>
               }
             />
@@ -444,17 +455,10 @@ const BookForm = ({ title, submitBtnTitle, onSubmit, initialState }: Props) => {
           <ErrorList errors={errors?.price} />
         </div>
       </div>
-
-      <Button
-        isLoading={busy}
-        type={"button"}
-        onPress={handleSubmit}
-        className={"w-full"}
-      >
+      <Button isLoading={busy} type={"submit"} className={"w-full"}>
         {submitBtnTitle}
       </Button>
     </form>
   );
 };
-
 export default BookForm;

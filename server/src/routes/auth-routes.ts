@@ -1,22 +1,26 @@
+import { Router } from "express";
 import {
-  generateLink,
+  generateAuthLink,
   logout,
   sendProfileInfo,
   updateProfile,
   verifyAuthToken,
 } from "@/controllers/auth-controller";
-import { isAuth } from "@/middlewares/auth-middleware";
-import { fileParser } from "@/middlewares/file-middleware";
 import {
   emailValidationSchema,
   newUserSchema,
   validate,
-} from "@/middlewares/validate-middleware";
-import { Router } from "express";
+} from "@/middlewares/validator";
+import { isAuth } from "@/middlewares/auth-middleware";
+import { fileParser } from "@/middlewares/file-middleware";
 
 const router = Router();
 
-router.post("/generate-link", validate(emailValidationSchema), generateLink);
+router.post(
+  "/generate-link",
+  validate(emailValidationSchema),
+  generateAuthLink,
+);
 
 router.get("/verify", verifyAuthToken);
 
@@ -29,7 +33,7 @@ router.put(
   isAuth,
   fileParser,
   validate(newUserSchema),
-  updateProfile
+  updateProfile,
 );
 
 export default router;

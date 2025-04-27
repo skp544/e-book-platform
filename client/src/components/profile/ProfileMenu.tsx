@@ -1,14 +1,14 @@
+import { FC } from "react";
+import { Profile } from "../../types";
 import {
   Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
   DropdownItem,
-  User,
+  DropdownMenu,
   DropdownSection,
-} from "@nextui-org/react";
-import { FC } from "react";
+  DropdownTrigger,
+  User,
+} from "@heroui/react";
 import { Link } from "react-router-dom";
-import { Profile } from "../../types";
 
 interface LinkProps {
   title: string;
@@ -17,7 +17,7 @@ interface LinkProps {
 
 const DropdownLink: FC<LinkProps> = ({ title, to }) => {
   return (
-    <Link className="px-2 py-1.5 w-full block" to={to}>
+    <Link className="block w-full px-2 py-1.5" to={to}>
       {title}
     </Link>
   );
@@ -29,19 +29,18 @@ interface Props {
 }
 
 const ProfileMenu: FC<Props> = ({ profile, signOut }) => {
-  const { email, role, avatar, name } = profile;
-
+  const { name, email, role, avatar } = profile;
   return (
-    <div className="flex items-center gap-4">
-      <Dropdown placement="bottom-start">
+    <div className={"flex items-center gap-4"}>
+      <Dropdown placement={"bottom-start"}>
         <DropdownTrigger>
           <User
-            as="button"
+            as={"button"}
             avatarProps={{
               isBordered: true,
               src: avatar,
             }}
-            className="transition-transform"
+            className={"transition-transform"}
             name={name?.split(" ")[0]}
           />
         </DropdownTrigger>
@@ -96,5 +95,4 @@ const ProfileMenu: FC<Props> = ({ profile, signOut }) => {
     </div>
   );
 };
-
 export default ProfileMenu;

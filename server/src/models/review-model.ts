@@ -26,12 +26,12 @@ const reviewSchema = new Schema<ReviewDoc>(
     },
     content: {
       type: String,
-      trim: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-const Review = model("Review", reviewSchema);
+const ReviewModel = model("Review", reviewSchema);
 
-export default Review as Model<ReviewDoc>;
+// export default ReviewModel;
+export default ReviewModel as Model<ReviewDoc>;

@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { featuredBooksApi } from "../apis/book";
-import { FeaturedBook } from "../types";
+import { FeaturedBook } from "../../types";
+import { featuredBooksApi } from "../../apis/book.ts";
+import { addToast, Button } from "@heroui/react";
+import Skeletons from "../skeletons";
 import Slider from "react-slick";
-import { Button } from "@nextui-org/react";
-import { FaArrowRightLong } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import Skeletons from "./skeletons";
-import toast from "react-hot-toast";
+import { FaArrowRightLong } from "react-icons/fa6";
 
 const HeroSection = () => {
   const [featuredBooks, setFeaturedBooks] = useState<FeaturedBook[]>([]);
@@ -15,7 +14,11 @@ const HeroSection = () => {
   const fetchFeaturedBooks = async () => {
     const response = await featuredBooksApi();
     if (!response.success) {
-      return toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
     setBusy(false);
     setFeaturedBooks(response.data);
@@ -41,15 +44,20 @@ const HeroSection = () => {
   };
 
   return (
-    <div className="md:h-96 overflow-hidden rounded-md p-5 bg-[#faf7f2] dark:bg-[#231e1a] ">
+    <div className="overflow-hidden rounded-md bg-[#faf7f2] p-5 md:h-96 dark:bg-[#231e1a]">
       <Slider {...settings}>
         {featuredBooks.map((book) => {
           return (
             <div key={book.slug}>
-              <div className="md:flex justify-between ">
-                <div className="flex-1 flex flex-col justify-center p-5">
-                  <h1 className="lg:text-5xl text-3xl">{book.slogan}</h1>
-                  <p className="mt-3 md:text-lg italic"> {book.title}</p>
+              <div className="justify-between md:flex">
+                <div className="flex flex-1 flex-col justify-center p-5">
+                  <h1 className="text-3xl text-white lg:text-5xl">
+                    {book.slogan}
+                  </h1>
+                  <p className="mt-3 italic text-white md:text-lg">
+                    {" "}
+                    {book.title}
+                  </p>
                   <div className="mt-3">
                     <Button
                       radius="sm"
@@ -64,11 +72,11 @@ const HeroSection = () => {
                   </div>
                 </div>
 
-                <div className="p-5 flex-1 flex items-center justify-center">
+                <div className="flex flex-1 items-center justify-center p-5">
                   <img
                     src={book.cover}
                     alt={book.title}
-                    className="md:w-48 md:h-80 w-32  rounded-md object-cover shadow-lg rotate-12"
+                    className="w-32 rotate-12 rounded-md object-cover shadow-lg md:h-80 md:w-48"
                   />
                 </div>
               </div>
@@ -79,5 +87,4 @@ const HeroSection = () => {
     </div>
   );
 };
-
 export default HeroSection;

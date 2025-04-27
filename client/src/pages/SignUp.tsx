@@ -1,9 +1,9 @@
-import { Button, Input } from "@nextui-org/react";
-import { useState } from "react";
-import { emailRegex } from "../helper";
-import { generateLinkApi } from "../apis/auth.ts";
+import { FormEventHandler, useState } from "react";
 import { RiMailCheckLine } from "react-icons/ri";
-import toast from "react-hot-toast";
+import { addToast, Button, Input } from "@heroui/react";
+import Book from "../components/svg/Book.tsx";
+import { emailRegex } from "../helpers";
+import { generateLink } from "../apis/auth.ts";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -11,25 +11,37 @@ const SignUp = () => {
   const [showSuccessResponse, setShowSuccessResponse] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const handleSubmit = async () => {
-    if (!emailRegex.test(email)) return setInvalidForm(true);
-    setInvalidForm(false);
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+
+    if (!emailRegex.test(email)) {
+      return setInvalidForm(true);
+    }
 
     setBusy(true);
-    const response = await generateLinkApi({ email });
+    const response = await generateLink({ email });
     setBusy(false);
 
-    if (!response.success) {
-      return toast.error(response.message);
+    if (!response?.success) {
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
-    if (response.success) {
-      setShowSuccessResponse(true);
-    }
+
+    setShowSuccessResponse(true);
+
+    addToast({
+      color: "success",
+      title: "Success",
+      description: response?.message,
+    });
   };
 
   if (showSuccessResponse) {
     return (
-      <div className={"flex-1 flex flex-col items-center justify-center"}>
+      <div className={"flex flex-1 flex-col items-center justify-center"}>
         <RiMailCheckLine size={80} className={"animate-bounce"} />
         <p className={"text-lg font-semibold"}>
           Please check your email we just sent you a magic link.
@@ -39,45 +51,39 @@ const SignUp = () => {
   }
 
   return (
-    <div className={"flex-1 flex items-center justify-center"}>
+    <div className={"flex flex-1 items-center justify-center"}>
       <div
         className={
-          "w-96 border-2 p-5 rounded flex flex-col items-center justify-center"
+          "flex w-96 flex-col items-center justify-center rounded border-2 p-5"
         }
       >
-        {/*<Book  />*/}
-        {/*  <SlBookOpen className={"w-44 h-44"} />*/}
-        <img className={"w-44 h-44"} src={"/book.png"} alt={"book"} />
+        <Book className={"h-44 w-44"} />
         <h1 className={"text-center text-xl font-semibold"}>
           Books are the keys to countless doors. Sign up and unlock your
           potential
         </h1>
 
-        <div className={"w-full space-y-6 mt-6"}>
+        <form onSubmit={handleSubmit} className={"mt-6 w-full space-y-6"}>
           <Input
-            label="Email"
-            placeholder="john@email.com"
-            variant="bordered"
-            isInvalid={invalidForm}
-            errorMessage="Invalid email!"
+            type={"email"}
+            label={"Email"}
+            placeholder={"john@email.com"}
+            variant={"bordered"}
             value={email}
-            isRequired
             onChange={({ target }) => {
               setEmail(target.value);
             }}
+            isRequired
+            errorMessage={"Invalid email!"}
+            isInvalid={invalidForm}
           />
-          <Button
-            isLoading={busy}
-            onPress={handleSubmit}
-            type={"button"}
-            className={"w-full"}
-          >
+
+          <Button isLoading={busy} type={"submit"} className={"w-full"}>
             Send Me The Link
           </Button>
-        </div>
+        </form>
       </div>
     </div>
   );
 };
-
 export default SignUp;

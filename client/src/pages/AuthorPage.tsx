@@ -1,9 +1,8 @@
-import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { getAuthorDetailsApi } from "../apis/author.ts";
-import toast from "react-hot-toast";
+import { addToast, User } from "@heroui/react";
 import { IAuthorInfo } from "../types";
-import { User, Link } from "@nextui-org/react";
 import RichEditor from "../components/rich-editor";
 import BookList from "../components/book/BookList.tsx";
 
@@ -20,7 +19,11 @@ const AuthorPage = () => {
     setFetching(false);
 
     if (!response.success) {
-      return toast.error(response.message);
+      return addToast({
+        color: "danger",
+        title: "Error",
+        description: response.message,
+      });
     }
 
     setAuthorInfo(response.data);
@@ -36,7 +39,7 @@ const AuthorPage = () => {
 
   if (fetching) {
     return (
-      <div className={"text-center pt-10 animate-pulse"}>
+      <div className={"animate-pulse pt-10 text-center"}>
         <p className={""}>Loading...</p>
       </div>
     );
@@ -47,26 +50,28 @@ const AuthorPage = () => {
       <User name={authorInfo?.name} />
 
       <div className={"py-6 pl-10"}>
-        <h1 className="font-semibold text-lg">Social Links:</h1>
+        <h1 className="text-lg font-semibold">Social Links:</h1>
 
         <div className="flex items-center space-x-2">
-          {authorInfo?.socialLinks.map((link) => {
-            const { host } = new URL(link);
-            return (
-              <div key={link}>
-                <Link
-                  className="text-gray-800 dark:text-white font-semibold underline"
-                  href={link}
-                  target="_blank"
-                >
-                  {host}
-                </Link>
-              </div>
-            );
-          })}
+          {authorInfo?.socialLinks &&
+            authorInfo?.socialLinks?.length > 0 &&
+            authorInfo?.socialLinks.map((link) => {
+              const { host } = new URL(link);
+              return (
+                <div key={link}>
+                  <Link
+                    className="font-semibold text-gray-800 underline dark:text-white"
+                    to={link}
+                    target="_blank"
+                  >
+                    {host}
+                  </Link>
+                </div>
+              );
+            })}
         </div>
       </div>
-      <div className="pl-10 mt-3">
+      <div className="mt-3 pl-10">
         <RichEditor value={authorInfo?.about} className="regular" />
       </div>
 
@@ -76,5 +81,4 @@ const AuthorPage = () => {
     </div>
   );
 };
-
 export default AuthorPage;

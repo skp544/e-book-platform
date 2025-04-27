@@ -1,20 +1,41 @@
+import { Response, Request } from "express";
 import { UserDoc } from "@/models/user-model";
-import { Request, Response } from "express";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 type ErrorResponseType = {
-  status: number;
-  message: string;
   res: Response;
+  message?: string;
+  status?: number;
 };
 
 export const sendErrorResponse = ({
   res,
-  message,
-  status,
+  status = 500,
+  message = "Internal Server Error",
 }: ErrorResponseType) => {
-  res.status(status).json({
-    success: false,
-    message,
+  res.status(status).json({ success: false, message });
+};
+
+export const handleError = (error: unknown, res: Response) => {
+  if (error instanceof JsonWebTokenError) {
+    return sendErrorResponse({
+      res,
+      status: 401,
+      message: error.message,
+    });
+  }
+
+  if (error instanceof Error) {
+    return sendErrorResponse({
+      res,
+      message: error.message,
+    });
+  }
+
+  // Handle unknown error structure
+  return sendErrorResponse({
+    res,
+    message: "Internal Server Error",
   });
 };
 
@@ -24,10 +45,10 @@ export const formatUserProfile = (user: UserDoc): Request["user"] => {
     name: user.name,
     email: user.email,
     role: user.role,
-    avatar: user.avatar?.url,
     signedUp: user.signedUp,
+    avatar: user.avatar?.url,
     authorId: user.authorId?.toString(),
-    books: user.books.map(b => b.toString()),
+    books: user.books.map((b) => b.toString()),
   };
 };
 
@@ -46,6 +67,6 @@ export const generateS3ClientPublicUrl = (
   return `https://${bucketName}.s3.amazonaws.com/${uniqueKey}`;
 };
 
-export  const sanitizeUrl = (url: string) => {
- return  url.replace(/ /g, "%20");
-}
+export const sanitizeUrl = (url: string) => {
+  return url.replace(/ /g, "%20");
+};
