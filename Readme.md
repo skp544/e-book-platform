@@ -85,3 +85,17 @@ npm run dev
 ```
 
 Open [http://localhost:8000](http://localhost:8000) in your browser to view the API.
+
+**Installation For Client**
+
+Install the project dependencies using npm:
+
+```bash
+npm install
+```
+
+**Running the Project**
+
+```bash
+npm run dev
+```
